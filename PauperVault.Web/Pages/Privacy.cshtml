@@ -1,0 +1,93 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Politique de confidentialité";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<p class="text-muted">
+    Dernière mise à jour : 28/01/2026
+</p>
+
+<h2 class="h4 mt-4">1) Qui sommes-nous ?</h2>
+<p>
+    <strong>PauperVault</strong> est un site communautaire dédié aux formats Magic: The Gathering, notamment Pauper et Pauper Commander.
+</p>
+
+<h2 class="h4 mt-4">2) Données collectées</h2>
+<p>
+    PauperVault est conçu pour collecter le minimum de données.
+</p>
+<ul>
+    <li>
+        <strong>Données techniques</strong> : comme la plupart des sites web, l’hébergement peut enregistrer des logs
+        (adresse IP, user-agent, date/heure, URL consultée, codes de réponse) afin d’assurer le fonctionnement,
+        la sécurité et le diagnostic d’erreurs.
+    </li>
+    <li>
+        <strong>Données fournies par l’utilisateur</strong> : à ce stade (MVP), PauperVault ne propose pas de création de compte
+        et ne demande pas d’informations personnelles (nom, email, etc.).
+    </li>
+</ul>
+
+<h2 class="h4 mt-4">3) Cookies</h2>
+<p>
+    PauperVault n’utilise pas de cookies publicitaires ni de tracking.
+    Des cookies techniques peuvent être utilisés par le framework ou l’hébergement pour garantir le bon fonctionnement du site.
+</p>
+
+<h2 class="h4 mt-4">4) Finalités (pourquoi ces données ?)</h2>
+<ul>
+    <li>Assurer le fonctionnement du site (affichage des pages, stabilité).</li>
+    <li>Sécuriser le service (prévention d’abus, attaques, débogage).</li>
+    <li>Améliorer le site (diagnostic de bugs, performances).</li>
+</ul>
+
+<h2 class="h4 mt-4">5) Services tiers</h2>
+<p>
+    <strong>Données de cartes</strong> : PauperVault utilise l’API de <strong>Scryfall</strong> pour rechercher et afficher des informations de cartes.
+    Lorsque vous effectuez une recherche de carte depuis PauperVault, des requêtes peuvent être envoyées à Scryfall.
+</p>
+<p class="mb-0">
+    Pour plus d’informations, vous pouvez consulter la politique de confidentialité de Scryfall.
+</p>
+
+<h2 class="h4 mt-4">6) Hébergement</h2>
+<p>
+    PauperVault est hébergé sur Microsoft Azure. L’infrastructure d’hébergement peut traiter des données techniques
+    (logs) nécessaires à la fourniture du service.
+</p>
+
+<h2 class="h4 mt-4">7) Durée de conservation</h2>
+<p>
+    Les données techniques (logs) sont conservées uniquement le temps nécessaire aux besoins de sécurité
+    et de maintenance, puis supprimées ou anonymisées selon les configurations de l’hébergement.
+</p>
+
+<h2 class="h4 mt-4">8) Partage des données</h2>
+<p>
+    PauperVault ne vend ni ne loue vos données personnelles.
+    Les données techniques peuvent être traitées par l’hébergeur (Azure) et les requêtes carte par Scryfall
+    uniquement pour fournir le service.
+</p>
+
+<h2 class="h4 mt-4">9) Vos droits</h2>
+<p>
+    Conformément au RGPD, vous pouvez demander l’accès, la rectification ou la suppression des données personnelles vous concernant.
+    Étant donné que PauperVault ne collecte pas de compte utilisateur à ce stade, les demandes portent essentiellement sur
+    d’éventuels logs techniques.
+</p>
+
+<h2 class="h4 mt-4">10) Contact</h2>
+<p class="mb-0">
+    Pour toute question relative à cette politique de confidentialité, vous pouvez nous contacter via la page
+    <a asp-page="/Legal">Mentions légales</a>.
+</p>
+
+<hr class="my-4" />
+
+@* <p class="text-muted small">
+    Remarque : lorsque des fonctionnalités de compte (ex. Firebase Authentication) seront ajoutées, cette politique
+    sera mise à jour pour préciser les données nécessaires à la gestion des comptes (identifiant, email, etc.).
+</p> *@

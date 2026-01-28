@@ -1,0 +1,88 @@
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@{
+    var siteName = Config["Site:Name"] ?? "PauperVault";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @siteName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PauperVault.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="pv-header">
+        <div class="container pv-header-inner">
+            <a class="pv-logo" asp-page="/Index" aria-label="@siteName">
+                <img src="~/images/logo.png"
+                     alt="@siteName"
+                     class="pv-logo-img" />
+            </a>
+
+            <nav class="pv-nav">
+                <a class="pv-nav-link" asp-page="/Decks">Decks</a>
+                <a class="pv-nav-link" asp-page="/Staples">Staples</a>
+                <a class="pv-nav-link" asp-page="/Formats">Formats</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <main role="main" class="py-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="pv-footer mt-5">
+        <div class="container py-4 text-center text-light">
+
+            <!-- Liens haut -->
+            <div class="d-flex flex-wrap justify-content-center gap-3 mb-3">
+                <a class="text-light text-decoration-none" asp-page="/About">À propos</a>
+                <a class="text-light text-decoration-none" asp-page="/Privacy">Confidentialité</a>
+                <a class="text-light text-decoration-none" asp-page="/Legal">Mentions légales</a>
+                @* Optionnel plus tard:
+               <a class="text-light text-decoration-none" asp-page="/Terms">Conditions d’utilisation</a>
+               <a class="text-light text-decoration-none" asp-page="/Contact">Contact</a>
+            *@
+            </div>
+
+            <!-- Réseaux (placeholder texte, sans icônes) -->
+            @*<div class="d-flex flex-wrap justify-content-center gap-3 mb-3 small">
+                 Mets des liens quand tu auras tes comptes 
+                <span class="text-secondary">Twitter</span>
+                <span class="text-secondary">GitHub</span>
+                <span class="text-secondary">Discord</span>
+            </div>*@
+
+            <!-- Attribution / crédits -->
+            <div class="small mb-2">
+                Données cartes :
+                <a class="text-light" href="https://scryfall.com" target="_blank" rel="noopener noreferrer">Scryfall</a>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="pv-footer-disclaimer small text-secondary">
+                Magic: The Gathering et toutes les marques associées sont © Wizards of the Coast LLC.
+                @siteName est un projet communautaire non officiel, non affilié et non approuvé par Wizards of the Coast.
+            </div>
+
+            <hr class="border-secondary my-3" />
+
+            <div class="small text-secondary">
+                &copy; 2026 - @siteName
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

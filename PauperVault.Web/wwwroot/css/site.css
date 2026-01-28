@@ -1,0 +1,139 @@
+:root {
+    --pv-bg: #F8F9FA;
+    --pv-card: #FFFFFF;
+    --pv-border: #DEE2E6;
+    --pv-text: #212529;
+    --pv-text-muted: #6C757D;
+    --pv-accent: #2F7D5D;
+    --pv-accent-hover: #25684D;
+    --pv-accent-soft: #E6F2ED;
+    --pv-footer-bg: #343A40;
+    --pv-footer-text: #CED4DA;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Header */
+.pv-header {
+    background: var(--pv-footer-bg);
+    border-bottom: 1px solid var(--pv-border);
+}
+
+.pv-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.pv-logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.pv-logo-img {
+    height: 96px;
+    width: auto;
+    display: block;
+    margin-right: 20px;
+}
+
+.pv-nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.pv-nav-link {
+    color: var(--pv-footer-text);
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+    .pv-nav-link:hover,
+    .pv-nav-link:focus {
+        color: var(--pv-card);
+        text-decoration: none;
+    }
+
+    /* (Optionnel) lien de la page active : à utiliser en ajoutant class="pv-nav-link pv-active" */
+    .pv-nav-link.pv-active {
+        color: var(--pv-card);
+        background: var(--pv-accent-hover);
+    }
+
+/* Mobile */
+@media (max-width: 576px) {
+    .pv-logo-img {
+        height: 40px;
+    }
+
+    .pv-nav {
+        gap: 10px;
+    }
+
+    .pv-nav-link {
+        padding: 6px 8px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Footer */
+.pv-footer {
+    background: var(--pv-footer-bg);
+    color: var(--pv-footer-text);
+}
+
+    .pv-footer a {
+        color: var(--pv-footer-text);
+    }
+
+        .pv-footer a:hover {
+            color: var(--pv-footer-muted);
+            text-decoration: underline;
+        }
+
+.pv-footer-disclaimer {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pv-footer hr {
+    border-color: var(--pv-footer-divider) !important;
+}
+
+/* Button */
+.btn-pv {
+    background: var(--pv-accent);
+    color: #fff;
+}
+
+.btn-pv:hover {
+    background: var(--pv-accent-hover);
+}
