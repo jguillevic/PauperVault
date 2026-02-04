@@ -27,21 +27,18 @@
             getAuth,
             GoogleAuthProvider,
             signInWithRedirect,
-            getRedirectResult,
+            onAuthStateChanged,
             setPersistence,
             browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-        // 🔑 Firebase Web config (non secret, camelCase)
         const firebaseConfig = @Html.Raw(
                     System.Text.Json.JsonSerializer.Serialize(FirebaseWeb.Value, jsonOptions)
             );
 
-    console.log("Firebase config:", firebaseConfig);
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
         async function getCsrf() {
             const r = await fetch("/api/auth/csrf", { credentials: "same-origin" });
@@ -49,16 +46,12 @@
             return j.csrfToken;
         }
 
-        // 🔁 1) Gestion du retour APRÈS redirect Google
-        (async () => {
+        // ✅ SOLUTION ROBUSTE : écouter l’état Firebase
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
             try {
-                const result = await getRedirectResult(auth);
-
-                console.log("Redirect result:", result);
-
-                if (!result || !result.user) return;
-
-                const idToken = await result.user.getIdToken();
+                const idToken = await user.getIdToken();
                 const csrfToken = await getCsrf();
 
                 const res = await fetch("/api/auth/sessionLogin", {
@@ -68,10 +61,7 @@
                     body: JSON.stringify({ idToken, csrfToken })
                 });
 
-                if (!res.ok) {
-                    const payload = await res.json().catch(async () => ({ error: await res.text() }));
-                    throw new Error(payload.error ?? "Connexion refusée");
-                }
+                if (!res.ok) throw new Error("Session login failed");
 
                 window.location.href = "/Me";
             } catch (e) {
@@ -79,15 +69,12 @@
                 document.getElementById("err").textContent =
                     e?.message ?? "Erreur lors de la connexion";
             }
-        })();
+        });
 
-        // 🚀 2) Lancer le redirect Google
+        // 🚀 Lancer le redirect Google
         document.getElementById("googleBtn").addEventListener("click", async () => {
             document.getElementById("err").textContent = "";
-
-            // ✅ IMPORTANT : persistance AVANT redirect
             await setPersistence(auth, browserLocalPersistence);
-
             await signInWithRedirect(auth, provider);
         });
     </script>
