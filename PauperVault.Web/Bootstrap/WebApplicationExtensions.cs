@@ -1,6 +1,4 @@
-﻿using PauperVault.Web.Endpoints;
-
-namespace PauperVault.Web.Bootstrap;
+﻿namespace PauperVault.Web.Bootstrap;
 
 public static class WebApplicationExtensions
 {
@@ -17,11 +15,7 @@ public static class WebApplicationExtensions
 
 		app.UseRouting();
 
-		app.UseAuthentication();
-		app.UseAuthorization();
-
 		// Endpoints
-		app.MapAuthEndpoints();
 		app.MapRazorPages();
 	}
 }

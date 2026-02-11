@@ -9,6 +9,9 @@
     --pv-accent-soft: #E6F2ED;
     --pv-footer-bg: #343A40;
     --pv-footer-text: #CED4DA;
+    /* (Optionnel) si tu veux éviter des "undefined variables" dans ton footer */
+    --pv-footer-muted: #ADB5BD;
+    --pv-footer-divider: rgba(255, 255, 255, .18);
 }
 
 html {
@@ -34,20 +37,16 @@ body {
     margin-bottom: 60px;
 }
 
-/* Header */
+/* =========================
+   Header (Bootstrap navbar)
+   ========================= */
+
 .pv-header {
     background: var(--pv-footer-bg);
-    border-bottom: 1px solid var(--pv-border);
+    border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
-.pv-header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
+/* Brand */
 .pv-logo {
     display: inline-flex;
     align-items: center;
@@ -55,22 +54,24 @@ body {
 }
 
 .pv-logo-img {
-    height: 96px;
+    height: 96px; /* MODIF (au lieu de 96px) */
     width: auto;
     display: block;
-    margin-right: 20px;
+    margin-right: 10px; /* MODIF (au lieu de 20px) */
 }
 
-.pv-nav {
-    display: flex;
-    align-items: center;
-    gap: 18px;
+.pv-brand-name {
+    color: var(--pv-footer-text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: .2px;
 }
 
+/* Nav links */
 .pv-nav-link {
     color: var(--pv-footer-text);
     text-decoration: none;
-    padding: 8px 10px;
+    padding: .4rem .5rem; /* MODIF : un peu plus "navbar" */
     border-radius: 6px;
     font-weight: 500;
     font-size: 0.95rem;
@@ -82,29 +83,65 @@ body {
         text-decoration: none;
     }
 
-    /* (Optionnel) lien de la page active : à utiliser en ajoutant class="pv-nav-link pv-active" */
+    /* (Optionnel) lien actif */
     .pv-nav-link.pv-active {
         color: var(--pv-card);
         background: var(--pv-accent-hover);
     }
 
+/* Boutons à droite */
+.pv-btn-register {
+    background: rgba(255,255,255,.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.18);
+}
+
+    .pv-btn-register:hover {
+        background: rgba(255,255,255,.18);
+        color: #fff;
+    }
+
+.pv-btn-ghost {
+    background: transparent;
+    color: var(--pv-footer-text);
+    border: 1px solid rgba(255,255,255,.18);
+}
+
+    .pv-btn-ghost:hover {
+        color: #fff;
+        border-color: rgba(255,255,255,.35);
+    }
+
+/* Burger visible sur fond sombre */
+.pv-header .navbar-toggler {
+    border-color: rgba(255,255,255,.25);
+}
+
+.pv-header .navbar-toggler-icon {
+    filter: invert(1) grayscale(1) brightness(1.6);
+}
+
 /* Mobile */
 @media (max-width: 576px) {
     .pv-logo-img {
-        height: 40px;
+        height: 24px; /* MODIF (au lieu de 40px) */
     }
 
-    .pv-nav {
-        gap: 10px;
+    /* Optionnel : cache le nom du site pour garder une topbar compacte */
+    .pv-brand-name {
+        display: none;
     }
 
     .pv-nav-link {
-        padding: 6px 8px;
-        font-size: 0.9rem;
+        padding: .35rem .5rem;
+        font-size: 0.95rem;
     }
 }
 
-/* Footer */
+/* =========================
+   Footer
+   ========================= */
+
 .pv-footer {
     background: var(--pv-footer-bg);
     color: var(--pv-footer-text);
@@ -128,12 +165,39 @@ body {
     border-color: var(--pv-footer-divider) !important;
 }
 
-/* Button */
+/* =========================
+   Buttons
+   ========================= */
+
 .btn-pv {
     background: var(--pv-accent);
     color: #fff;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 8px; /* optionnel, plus moderne */
+    transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
 }
 
-.btn-pv:hover {
-    background: var(--pv-accent-hover);
+    .btn-pv:hover,
+    .btn-pv:focus {
+        background: var(--pv-accent-hover);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+
+    .btn-pv:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 10px rgba(0,0,0,.10);
+    }
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-pv {
+        transition: none;
+    }
+
+        .btn-pv:hover,
+        .btn-pv:focus,
+        .btn-pv:active {
+            transform: none;
+        }
 }

@@ -1,0 +1,55 @@
+﻿@page
+@model PauperVault.Web.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Connexion";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/account-auth.css" asp-append-version="true" />
+}
+
+<div class="pv-auth">
+    <main class="pv-auth-main">
+        <div class="pv-auth-card card shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h3 mb-2">Connexion</h1>
+                <p class="text-muted mb-4">Connectez-vous pour accéder à votre compte.</p>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <form method="post" class="vstack gap-3">
+                    <div>
+                        <label class="form-label" asp-for="Input.Email">Adresse e-mail</label>
+                        <input class="form-control" asp-for="Input.Email" type="email" autocomplete="email" />
+                        <span class="text-danger small" asp-validation-for="Input.Email"></span>
+                    </div>
+
+                    <div>
+                        <label class="form-label" asp-for="Input.Password">Mot de passe</label>
+                        <input class="form-control" asp-for="Input.Password" type="password" autocomplete="current-password" />
+                        <span class="text-danger small" asp-validation-for="Input.Password"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-pv w-100">
+                        Se connecter
+                    </button>
+
+                    <div class="d-flex justify-content-between align-items-center small">
+                        <a class="text-decoration-none" asp-page="/Account/Register">Créer un compte</a>
+                        @* Optionnel si tu as une page :
+                        <a class="text-decoration-none" asp-page="/Account/ForgotPassword">Mot de passe oublié ?</a>
+                        *@
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

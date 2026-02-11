@@ -1,7 +1,0 @@
-﻿@page
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
-
-<h1>Moi</h1>
-<p>UID: @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value</p>
-<p>Email: @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>

@@ -1,0 +1,23 @@
+﻿@page
+@model PauperVault.Web.Pages.Account.MeModel
+
+<h1>Mon compte</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <p style="color:red">@Model.ErrorMessage</p>
+}
+else if (Model.Me is null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <dl>
+        <dt>UserId</dt>
+        <dd>@Model.Me.UserId</dd>
+
+        <dt>Email</dt>
+        <dd>@Model.Me.Email</dd>
+    </dl>
+}

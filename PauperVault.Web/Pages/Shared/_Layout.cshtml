@@ -1,6 +1,11 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@inject IHttpContextAccessor HttpContextAccessor
+@inject PauperVault.Web.Services.Account.IAccountService AccountService
+
 @{
     var siteName = Config["Site:Name"] ?? "PauperVault";
+
+    var isLoggedIn = AccountService.IsSignedIn(Context);
 }
 
 <!DOCTYPE html>
@@ -9,33 +14,81 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @siteName</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PauperVault.Web.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header class="pv-header">
-        <div class="container pv-header-inner">
-            <a class="pv-logo" asp-page="/Index" aria-label="@siteName">
-                <img src="~/images/logo.png"
-                     alt="@siteName"
-                     class="pv-logo-img" />
+
+    <!-- HEADER (navbar) -->
+    <header class="navbar navbar-expand-lg pv-header">
+        <div class="container-fluid px-3">
+
+            <!-- Brand -->
+            <a class="navbar-brand pv-logo" asp-page="/Index" aria-label="@siteName">
+                <img src="~/images/logo.png" alt="@siteName" class="pv-logo-img" />
             </a>
 
-            <nav class="pv-nav">
-                <a class="pv-nav-link" asp-page="/Decks">Decks</a>
-                <a class="pv-nav-link" asp-page="/Staples">Staples</a>
-                <a class="pv-nav-link" asp-page="/Formats">Formats</a>
-            </nav>
+            <!-- Burger -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#pvNavbar"
+                    aria-controls="pvNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="pvNavbar">
+                <!-- Menu gauche -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link pv-nav-link" asp-page="/Decks">Decks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link pv-nav-link" asp-page="/Staples">Staples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link pv-nav-link" asp-page="/Formats">Formats</a>
+                    </li>
+                </ul>
+
+                <!-- Actions droite -->
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    @if (isLoggedIn)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link pv-nav-link" asp-page="/Account/Me">Mon compte</a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" asp-page="/Account/Logout">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm pv-btn-ghost">Se déconnecter</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link pv-nav-link" asp-page="/Account/Login">Se connecter</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-sm pv-btn-register" asp-page="/Account/Register">S’inscrire</a>
+                        </li>
+                    }
+                </ul>
+
+            </div>
         </div>
     </header>
 
+    <!-- CONTENT -->
     <div class="container">
         <main role="main" class="py-4">
             @RenderBody()
         </main>
     </div>
 
+    <!-- FOOTER -->
     <footer class="pv-footer mt-5">
         <div class="container py-4 text-center text-light">
 
@@ -45,18 +98,10 @@
                 <a class="text-light text-decoration-none" asp-page="/Privacy">Confidentialité</a>
                 <a class="text-light text-decoration-none" asp-page="/Legal">Mentions légales</a>
                 @* Optionnel plus tard:
-               <a class="text-light text-decoration-none" asp-page="/Terms">Conditions d’utilisation</a>
-               <a class="text-light text-decoration-none" asp-page="/Contact">Contact</a>
-            *@
+                   <a class="text-light text-decoration-none" asp-page="/Terms">Conditions d’utilisation</a>
+                   <a class="text-light text-decoration-none" asp-page="/Contact">Contact</a>
+                *@
             </div>
-
-            <!-- Réseaux (placeholder texte, sans icônes) -->
-            @*<div class="d-flex flex-wrap justify-content-center gap-3 mb-3 small">
-                 Mets des liens quand tu auras tes comptes 
-                <span class="text-secondary">Twitter</span>
-                <span class="text-secondary">GitHub</span>
-                <span class="text-secondary">Discord</span>
-            </div>*@
 
             <!-- Attribution / crédits -->
             <div class="small mb-2">
@@ -78,7 +123,7 @@
         </div>
     </footer>
 
-
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

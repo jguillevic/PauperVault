@@ -1,0 +1,19 @@
+﻿.pv-auth {
+    min-height: calc(100vh - 60px);
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.pv-auth-main {
+    display: grid;
+    place-items: center;
+    padding: 32px 16px;
+}
+
+.pv-auth-card {
+    width: 100%;
+    max-width: 520px;
+    border: 1px solid var(--pv-border);
+    border-radius: 14px;
+    background: var(--pv-card);
+}
