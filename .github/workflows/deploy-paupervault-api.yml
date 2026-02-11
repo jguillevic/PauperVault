@@ -1,0 +1,64 @@
+name: Build and deploy ASP.Net Core app to Azure Web App - PauperVault-Api
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "PauperVault.Api/**"
+      - "PauperVault.Core/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.x"
+
+      - name: Build PauperVault.Api
+        run: dotnet build PauperVault.Api/PauperVault.Api.csproj -c Release
+
+      - name: Publish PauperVault.Api
+        run: dotnet publish PauperVault.Api/PauperVault.Api.csproj -c Release -o ${{ env.DOTNET_ROOT }}/myapi
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-api
+          path: ${{ env.DOTNET_ROOT }}/myapi
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-api
+          path: ./api
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_837AAB2219084AD09687B33419B1DFC4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_519F178042D84A03A0CB93679B26A3E3 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5A7BD12BEC104F0F962ABA13EB723B57 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "PauperVault-Api"
+          slot-name: "Production"
+          package: ./api
