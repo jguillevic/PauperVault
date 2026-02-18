@@ -50,6 +50,9 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+	app.UseDeveloperExceptionPage();
+
 // 3. Pipeline HTTP minimal
 app.UseHttpsRedirection();
 app.UseAuthentication();

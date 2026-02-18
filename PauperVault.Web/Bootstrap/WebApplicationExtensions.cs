@@ -13,6 +13,19 @@ public static class WebApplicationExtensions
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
 
+		app.Use(async (ctx, next) =>
+		{
+			// Limite au login si tu veux
+			if (ctx.Request.Path.StartsWithSegments("/Account/Login"))
+			{
+				ctx.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups";
+				// Optionnel (souvent inutile ici, mais évite des surprises)
+				ctx.Response.Headers["Cross-Origin-Embedder-Policy"] = "unsafe-none";
+			}
+
+			await next();
+		});
+
 		app.UseRouting();
 
 		// Endpoints

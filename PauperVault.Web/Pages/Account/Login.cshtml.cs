@@ -5,12 +5,16 @@ using PauperVault.Web.Services.Account;
 
 namespace PauperVault.Web.Pages.Account;
 
-public class LoginModel(IAccountService accountService) : PageModel
+public class LoginModel(
+	IAccountService accountService, 
+	IConfiguration config) : PageModel
 {
 	[BindProperty]
 	public LoginInput Input { get; set; } = new();
 
 	public string? ErrorMessage { get; set; }
+
+	public string GoogleClientId { get; } = config["Google:ClientId"] ?? "";
 
 	public class LoginInput
 	{
@@ -36,4 +40,36 @@ public class LoginModel(IAccountService accountService) : PageModel
 
 		return RedirectToPage("/Account/Me");
 	}
+
+	public async Task<IActionResult> OnPostGoogleAsync([FromForm] string idToken)
+	{
+		if (User?.Identity?.IsAuthenticated == true)
+			return RedirectToPage("/Account/Me");
+
+		try
+		{
+			if (string.IsNullOrWhiteSpace(idToken))
+			{
+				ErrorMessage = "Connexion Google impossible : token manquant.";
+				return Page();
+			}
+
+			var (success, error) = await accountService.SignInWithGoogleAsync(HttpContext, idToken);
+			if (!success)
+			{
+				ErrorMessage = error;
+				return Page();
+			}
+
+			return RedirectToPage("/Account/Me");
+		}
+		catch (Exception ex)
+		{
+			// Important : log + message affichée
+			Console.Error.WriteLine(ex);
+			ErrorMessage = ex.ToString();
+			return Page();
+		}
+	}
+
 }

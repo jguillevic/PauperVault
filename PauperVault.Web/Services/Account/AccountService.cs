@@ -29,4 +29,22 @@ public class AccountService(IPauperVaultApiClient api, ITokenStore tokenStore) :
 
 	public void SignOut(HttpContext httpContext)
 		=> tokenStore.ClearToken(httpContext);
+
+	public async Task<(bool Success, string? Error)> SignInWithGoogleAsync(HttpContext httpContext, string idToken)
+	{
+		try
+		{
+			var token = await api.GoogleLoginAsync(idToken);
+			tokenStore.SetToken(httpContext, token);
+			return (true, null);
+		}
+		catch (HttpRequestException ex)
+		{
+			return (false, $"Erreur réseau/appel API : {ex.Message}");
+		}
+		catch (Exception ex)
+		{
+			return (false, $"Erreur inattendue : {ex.Message}");
+		}
+	}
 }

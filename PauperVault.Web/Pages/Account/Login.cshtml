@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Connexion";
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/account-auth.css" asp-append-version="true" />
 }
@@ -21,7 +22,8 @@
                     </div>
                 }
 
-                <form method="post" class="vstack gap-3">
+                <!-- FORM 1 : login email/password -->
+                <form method="post" asp-page="/Account/Login" class="vstack gap-3" id="passwordForm">
                     <div>
                         <label class="form-label" asp-for="Input.Email">Adresse e-mail</label>
                         <input class="form-control" asp-for="Input.Email" type="email" autocomplete="email" />
@@ -37,14 +39,39 @@
                     <button type="submit" class="btn btn-pv w-100">
                         Se connecter
                     </button>
-
-                    <div class="d-flex justify-content-between align-items-center small">
-                        <a class="text-decoration-none" asp-page="/Account/Register">Créer un compte</a>
-                        @* Optionnel si tu as une page :
-                        <a class="text-decoration-none" asp-page="/Account/ForgotPassword">Mot de passe oublié ?</a>
-                        *@
-                    </div>
                 </form>
+
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <div id="g_id_onload"
+                         data-client_id="@Model.GoogleClientId"
+                         data-ux_mode="popup"
+                         data-callback="handleGoogleCredential"
+                         data-auto_prompt="false">
+                    </div>
+
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signin_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+
+                <!-- FORM 2 : login Google (handler Google) -->
+                <form method="post" asp-page="/Account/Login" asp-page-handler="Google" id="googleForm">
+                    <input type="hidden" name="idToken" id="googleIdToken" />
+                </form>
+
+                <div class="d-flex justify-content-between align-items-center small mt-3">
+                    <a class="text-decoration-none" asp-page="/Account/Register">Créer un compte</a>
+                    @* Optionnel :
+                    <a class="text-decoration-none" asp-page="/Account/ForgotPassword">Mot de passe oublié ?</a>
+                    *@
+                </div>
             </div>
         </div>
     </main>
@@ -52,4 +79,18 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        let googleSubmitting = false;
+
+        function handleGoogleCredential(response) {
+          if (googleSubmitting) return; // évite double submit
+          googleSubmitting = true;
+
+          document.getElementById('googleIdToken').value = response.credential;
+
+          const form = document.getElementById('googleForm');
+          form.submit();
+        }
+    </script>
 }

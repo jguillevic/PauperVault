@@ -4,18 +4,14 @@ using System.Text.Json.Serialization;
 
 namespace PauperVault.Web.Infrastructure.Http.PauperVault
 {
-	public sealed class PauperVaultApiClient : IPauperVaultApiClient
+	public sealed class PauperVaultApiClient(HttpClient http) : IPauperVaultApiClient
 	{
-		private readonly HttpClient _http;
-
-		public PauperVaultApiClient(HttpClient http) => _http = http;
-
 		private record LoginRequest(string Email, string Password);
 		private record LoginResponse(string Token);
 
 		public async Task<string> LoginAsync(string email, string password, CancellationToken ct = default)
 		{
-			var resp = await _http.PostAsJsonAsync("auth/login", new LoginRequest(email, password), ct);
+			var resp = await http.PostAsJsonAsync("auth/login", new LoginRequest(email, password), ct);
 			resp.EnsureSuccessStatusCode();
 
 			var data = await resp.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken: ct);
@@ -29,7 +25,7 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 
 		public async Task RegisterAsync(string email, string password, CancellationToken ct = default)
 		{
-			var resp = await _http.PostAsJsonAsync("auth/register", new RegisterRequest(email, password), ct);
+			var resp = await http.PostAsJsonAsync("auth/register", new RegisterRequest(email, password), ct);
 
 			// Si l'API renvoie 400 avec des erreurs, on renvoie un message lisible
 			if (resp.StatusCode == System.Net.HttpStatusCode.BadRequest)
@@ -48,7 +44,7 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 
 		public async Task<MeResponse> MeAsync(CancellationToken ct = default)
 		{
-			var resp = await _http.GetAsync("auth/me", ct);
+			var resp = await http.GetAsync("auth/me", ct);
 
 			if (resp.StatusCode == HttpStatusCode.Unauthorized)
 				throw new UnauthorizedAccessException("JWT invalid or expired.");
@@ -60,6 +56,20 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 				throw new InvalidOperationException("Unexpected API response for /auth/me.");
 
 			return new MeResponse(data.UserId, data.Email);
+		}
+
+		private sealed record GoogleLoginRequest(string IdToken);
+
+		public async Task<string> GoogleLoginAsync(string idToken, CancellationToken ct = default)
+		{
+			var resp = await http.PostAsJsonAsync("auth/google", new GoogleLoginRequest(idToken), ct);
+			resp.EnsureSuccessStatusCode();
+
+			var data = await resp.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken: ct);
+			if (data is null || string.IsNullOrWhiteSpace(data.Token))
+				throw new InvalidOperationException("Token missing from API response.");
+
+			return data.Token;
 		}
 	}
 }
