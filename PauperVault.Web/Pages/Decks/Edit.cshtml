@@ -1,0 +1,125 @@
+﻿@page "{id:guid}"
+@model PauperVault.Web.Pages.Decks.EditModel
+
+<h1>@Model.Deck.Name</h1>
+
+<div style="margin-top: 1rem;">
+    <label>Ajouter une carte</label><br />
+    <input id="cardSearch" type="text" autocomplete="off" style="width: 420px;" />
+    <select id="zone">
+        <option value="Main">Main</option>
+        <option value="Sideboard">Sideboard</option>
+    </select>
+    <input id="qty" type="number" value="1" min="1" style="width: 80px;" />
+    <button id="addBtn" type="button" disabled>Ajouter</button>
+
+    <div id="suggestions" style="border: 1px solid #ccc; max-width: 420px; display:none; position:absolute; background:white;"></div>
+</div>
+
+<hr />
+
+<h2>Main</h2>
+<ul>
+    @foreach (var c in Model.Deck.Cards.Where(x => x.Zone.ToString() == "Main"))
+    {
+        <li>@c.Quantity x @c.ScryfallId</li>
+    }
+</ul>
+
+<h2>Sideboard</h2>
+<ul>
+    @foreach (var c in Model.Deck.Cards.Where(x => x.Zone.ToString() == "Sideboard"))
+    {
+        <li>@c.Quantity x @c.ScryfallId</li>
+    }
+</ul>
+
+@section Scripts {
+    <script>
+        const deckId = "@Model.Id";
+        const input = document.getElementById("cardSearch");
+        const suggestions = document.getElementById("suggestions");
+        const addBtn = document.getElementById("addBtn");
+        const qty = document.getElementById("qty");
+        const zone = document.getElementById("zone");
+
+        let selectedName = null;
+        let timer = null;
+
+        function clearSuggestions() {
+          suggestions.style.display = "none";
+          suggestions.innerHTML = "";
+          selectedName = null;
+          addBtn.disabled = true;
+        }
+
+        input.addEventListener("input", () => {
+          selectedName = null;
+          addBtn.disabled = true;
+
+          const q = input.value.trim();
+          if (q.length < 2) { clearSuggestions(); return; }
+
+          clearTimeout(timer);
+          timer = setTimeout(async () => {
+            const res = await fetch(`/Decks/Api?handler=CardAutocomplete&q=${encodeURIComponent(q)}`);
+            if (!res.ok) return;
+
+            const data = await res.json();
+            const items = data.suggestions || [];
+
+            suggestions.innerHTML = "";
+            if (items.length === 0) { suggestions.style.display = "none"; return; }
+
+            items.slice(0, 10).forEach(name => {
+              const div = document.createElement("div");
+              div.textContent = name;
+              div.style.padding = "6px";
+              div.style.cursor = "pointer";
+              div.addEventListener("click", () => {
+                input.value = name;
+                selectedName = name;
+                addBtn.disabled = false;
+                suggestions.style.display = "none";
+              });
+              suggestions.appendChild(div);
+            });
+
+            suggestions.style.display = "block";
+          }, 200);
+        });
+
+        addBtn.addEventListener("click", async () => {
+          if (!selectedName) return;
+
+          addBtn.disabled = true;
+
+          // 1) resolve card via Web endpoint -> API -> Scryfall
+          const resolveRes = await fetch(`/Decks/Api?handler=CardResolve&name=${encodeURIComponent(selectedName)}`);
+          if (!resolveRes.ok) { addBtn.disabled = false; return; }
+          const card = await resolveRes.json();
+
+          // 2) add card to deck via Web endpoint -> API
+          const addRes = await fetch(`/Decks/Api?handler=AddCard`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              deckId: deckId,
+              scryfallId: card.scryfallId,
+              zone: zone.value,
+              quantity: parseInt(qty.value || "1", 10)
+            })
+          });
+
+          if (addRes.ok) {
+            window.location.reload();
+          } else {
+            addBtn.disabled = false;
+          }
+        });
+
+        document.addEventListener("click", (e) => {
+          if (e.target !== input) clearSuggestions();
+        });
+    </script>
+}

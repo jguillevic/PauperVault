@@ -9,10 +9,10 @@ builder.AddPauperVaultApi();
 
 var app = builder.Build();
 
+// Pipeline
 if (app.Environment.IsDevelopment())
 	app.UseDeveloperExceptionPage();
 
-// Pipeline
 app.UsePauperVaultPipeline();
 
 app.Run();

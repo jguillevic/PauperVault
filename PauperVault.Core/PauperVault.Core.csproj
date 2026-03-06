@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Decks\" />
-    <Folder Include="Domain\Rules\" />
+    <Folder Include="Domain\Common\" />
     <Folder Include="Infrastructure\" />
   </ItemGroup>
 

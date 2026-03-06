@@ -1,5 +1,6 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using PauperVault.Web.Contracts.Cards;
+using PauperVault.Web.Contracts.Decks;
+using System.Net;
 using System.Text.Json.Serialization;
 
 namespace PauperVault.Web.Infrastructure.Http.PauperVault
@@ -70,6 +71,60 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 				throw new InvalidOperationException("Token missing from API response.");
 
 			return data.Token;
+		}
+
+		public async Task<IReadOnlyList<DeckListItemDto>> GetDecksAsync(CancellationToken ct = default)
+		{
+			var res = await http.GetAsync("/decks", ct);
+			res.EnsureSuccessStatusCode();
+			return (await res.Content.ReadFromJsonAsync<List<DeckListItemDto>>(cancellationToken: ct))!;
+		}
+
+		public async Task<Guid> CreateDeckAsync(CreateDeckRequest request, CancellationToken ct = default)
+		{
+			var res = await http.PostAsJsonAsync("/decks", request, ct);
+			res.EnsureSuccessStatusCode();
+
+			var payload = await res.Content.ReadFromJsonAsync<CreateDeckResponse>(cancellationToken: ct);
+			return payload!.Id;
+		}
+
+		public async Task<DeckDetailsDto> GetDeckAsync(Guid deckId, CancellationToken ct = default)
+		{
+			var res = await http.GetAsync($"/decks/{deckId}", ct);
+			res.EnsureSuccessStatusCode();
+			return (await res.Content.ReadFromJsonAsync<DeckDetailsDto>(cancellationToken: ct))!;
+		}
+
+		public async Task UpdateDeckAsync(Guid deckId, UpdateDeckRequest request, CancellationToken ct = default)
+		{
+			var res = await http.PutAsJsonAsync($"/decks/{deckId}", request, ct);
+			res.EnsureSuccessStatusCode();
+		}
+
+		public async Task DeleteDeckAsync(Guid deckId, CancellationToken ct = default)
+		{
+			var res = await http.DeleteAsync($"/decks/{deckId}", ct);
+			res.EnsureSuccessStatusCode();
+		}
+
+		public async Task AddOrUpdateDeckCardAsync(Guid deckId, AddOrUpdateDeckCardRequest request, CancellationToken ct = default)
+		{
+			var res = await http.PostAsJsonAsync($"/decks/{deckId}/cards", request, ct);
+			res.EnsureSuccessStatusCode();
+		}
+
+		public async Task<CardAutocompleteDto> AutocompleteCardsAsync(string q, CancellationToken ct = default)
+		{
+			return await http.GetFromJsonAsync<CardAutocompleteDto>($"/cards/autocomplete?q={Uri.EscapeDataString(q)}", ct)
+				?? new CardAutocompleteDto(Array.Empty<string>());
+		}
+
+		public async Task<CardDto> ResolveCardAsync(string name, CancellationToken ct = default)
+		{
+			var res = await http.GetAsync($"/cards/resolve?name={Uri.EscapeDataString(name)}", ct);
+			res.EnsureSuccessStatusCode();
+			return (await res.Content.ReadFromJsonAsync<CardDto>(cancellationToken: ct))!;
 		}
 	}
 }

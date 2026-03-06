@@ -1,0 +1,39 @@
+﻿@page
+@model PauperVault.Web.Pages.Decks.CreateModel
+@{
+    ViewData["Title"] = "Créer un deck";
+}
+
+<div class="py-4">
+    <h1 class="h3 mb-3">Créer un deck</h1>
+
+    <form method="post" class="card">
+        <div class="card-body">
+            <div class="mb-3">
+                <label asp-for="Input.Name" class="form-label">Nom</label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Description" class="form-label">Description (optionnel)</label>
+                <textarea asp-for="Input.Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Input.Description" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger mb-3">@Model.ErrorMessage</div>
+            }
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark">Créer</button>
+                <a class="btn btn-outline-secondary" asp-page="/Decks/Index">Annuler</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,7 +1,12 @@
 ﻿@page
 @model IndexModel
+
+@inject PauperVault.Web.Services.Account.IAccountService AccountService
+
 @{
     ViewData["Title"] = "Accueil";
+
+    var isLoggedIn = AccountService.IsSignedIn(HttpContext);
 }
 
 <div class="py-5">
@@ -14,9 +19,13 @@
             PauperVault utilise les données de cartes via l’API Scryfall.
         </p>
 
-        <div class="d-flex gap-2 mt-3">
+        <div class="d-flex flex-wrap gap-2 mt-3">
             <a class="btn btn-outline-dark" asp-page="/Decks">Explorer les decks</a>
-            <a class="btn btn-dark" asp-page="/DeckBuilder">Créer un deck</a>
+
+            @if (isLoggedIn == true)
+            {
+                <a class="btn btn-dark" asp-page="/Decks/Create">Créer un deck</a>
+            }
         </div>
     </section>
 
