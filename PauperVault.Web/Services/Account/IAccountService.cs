@@ -8,4 +8,5 @@ public interface IAccountService
 	void SignOut(HttpContext httpContext);
 	bool IsSignedIn(HttpContext httpContext);
 	Task<(bool Success, string? Error)> SignInWithGoogleAsync(HttpContext httpContext, string idToken);
+	Task<(bool Success, string? Error)> RegisterAsync(string email, string password, CancellationToken ct = default);
 }

@@ -1,0 +1,76 @@
+﻿@page
+@model PauperVault.Web.Pages.Decks.IndexModel
+
+@{
+    ViewData["Title"] = "Mes decks";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h3 mb-1">Mes decks</h1>
+            <p class="text-muted mb-0">Retrouve, ouvre et gère tes decks.</p>
+        </div>
+
+        <a class="btn btn-dark" asp-page="/Decks/Create">Créer un deck</a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.Decks.Count == 0)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 mb-2">Aucun deck pour le moment</h2>
+                <p class="text-muted mb-3">
+                    Commence par créer ton premier deck.
+                </p>
+                <a class="btn btn-dark" asp-page="/Decks/Create">Créer un deck</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Dernière mise à jour</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var deck in Model.Decks.OrderByDescending(x => x.UpdatedAt))
+                        {
+                            <tr>
+                                <td class="fw-semibold">@deck.Name</td>
+                                <td>@deck.UpdatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a class="btn btn-sm btn-outline-dark"
+                                           asp-page="/Decks/Edit"
+                                           asp-route-id="@deck.Id">
+                                            Ouvrir
+                                        </a>
+
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@deck.Id"
+                                              onsubmit="return confirm('Supprimer ce deck ?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

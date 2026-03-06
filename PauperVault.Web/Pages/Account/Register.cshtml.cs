@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PauperVault.Web.Infrastructure.Http.PauperVault;
+using PauperVault.Web.Services.Account;
 using System.ComponentModel.DataAnnotations;
 
 namespace PauperVault.Web.Pages.Account;
 
 public class RegisterModel : PageModel
 {
-	private readonly IPauperVaultApiClient _api;
+	private readonly IAccountService _accountService;
 
-	public RegisterModel(IPauperVaultApiClient api)
+	public RegisterModel(IAccountService accountService)
 	{
-		_api = api;
+		_accountService = accountService;
 	}
 
 	[BindProperty]
@@ -39,16 +39,14 @@ public class RegisterModel : PageModel
 		if (!ModelState.IsValid)
 			return Page();
 
-		try
+		var (success, error) = await _accountService.RegisterAsync(Input.Email, Input.Password, ct);
+
+		if (!success)
 		{
-			await _api.RegisterAsync(Input.Email, Input.Password, ct);
-			return RedirectToPage("/Account/Login");
-		}
-		catch (Exception ex)
-		{
-			// Pour l’instant, brut. Après on peut parser proprement le JSON { errors: [...] }
-			ErrorMessage = "Inscription impossible. " + ex.Message;
+			ErrorMessage = error;
 			return Page();
 		}
+
+		return RedirectToPage("/Account/Login");
 	}
 }

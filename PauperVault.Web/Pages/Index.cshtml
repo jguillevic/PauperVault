@@ -9,48 +9,89 @@
     var isLoggedIn = AccountService.IsSignedIn(HttpContext);
 }
 
-<div class="py-5">
+<div class="home-page py-5">
     <!-- Hero -->
-    <section class="mb-5">
-        <h1 class="display-5 fw-bold mb-3">Le hub Pauper &amp; Pauper Commander</h1>
+    <section class="home-hero mb-5">
+        <div class="row align-items-center g-4">
+            <div class="col-12 col-lg-8">
+                <span class="home-hero-kicker">Pauper • Pauper Commander • Deck building</span>
 
-        <p class="fs-5 text-muted" style="max-width: 70ch;">
-            Construis des decks, vérifie leur légalité, découvre des staples et partage tes listes.
-            PauperVault utilise les données de cartes via l’API Scryfall.
-        </p>
+                <h1 class="home-hero-title mt-2 mb-3">
+                    Le hub Pauper &amp; Pauper Commander
+                </h1>
 
-        <div class="d-flex flex-wrap gap-2 mt-3">
-            <a class="btn btn-outline-dark" asp-page="/Decks">Explorer les decks</a>
+                <p class="home-hero-text mb-4">
+                    Construis des decks, vérifie leur légalité, découvre des staples et partage tes listes.
+                    PauperVault s’appuie sur les données cartes de Scryfall pour proposer une expérience simple,
+                    rapide et claire.
+                </p>
 
-            @if (isLoggedIn == true)
-            {
-                <a class="btn btn-dark" asp-page="/Decks/Create">Créer un deck</a>
-            }
+                <div class="d-flex flex-wrap gap-2">
+                    @if (isLoggedIn)
+                    {
+                        <a class="btn btn-dark" asp-page="/Decks/Index">Explorer mes decks</a>
+                        <a class="btn btn-outline-dark" asp-page="/Decks/Create">Créer un deck</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-dark" asp-page="/Account/Register">Créer un compte</a>
+                        <a class="btn btn-outline-dark" asp-page="/Account/Login">Se connecter</a>
+                    }
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="home-hero-panel card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="small text-uppercase text-muted fw-semibold mb-2">
+                            Pourquoi PauperVault ?
+                        </div>
+
+                        <ul class="list-unstyled mb-0 home-hero-list">
+                            <li class="mb-2">Deck builder simple et rapide</li>
+                            <li class="mb-2">Base dédiée au Pauper et au PDH</li>
+                            <li class="mb-2">Organisation claire de tes listes</li>
+                            <li class="mb-0">Évolution progressive avec stats et validation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Formats -->
-    <section class="row g-3 mb-5">
-        <div class="col-12 col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="h5 card-title mb-2">Pauper</h2>
-                    <p class="card-text text-muted mb-3">
-                        Format construit accessible : 60 cartes, staples, decklists et banlist.
-                    </p>
-                    <a class="btn btn-sm btn-outline-dark" asp-page="/Formats">Voir le format Pauper</a>
-                </div>
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <h2 class="h3 mb-1">Formats pris en charge</h2>
+                <p class="text-muted mb-0">Explore les deux formats au cœur de l’application.</p>
             </div>
         </div>
 
-        <div class="col-12 col-md-6">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="h5 card-title mb-2">Pauper Commander (PDH)</h2>
-                    <p class="card-text text-muted mb-3">
-                        Variante Commander : commander uncommon, deck en communes, identité couleur.
-                    </p>
-                    <a class="btn btn-sm btn-outline-dark" asp-page="/Formats">Voir le format PDH</a>
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <div class="card h-100 home-card">
+                    <div class="card-body p-4">
+                        <div class="small text-uppercase text-muted fw-semibold mb-2">Format</div>
+                        <h3 class="h4 card-title mb-2">Pauper</h3>
+                        <p class="card-text text-muted mb-3">
+                            Format construit accessible : 60 cartes, staples, decklists et banlist.
+                        </p>
+                        <a class="btn btn-sm btn-outline-dark" asp-page="/Formats">Voir le format Pauper</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="card h-100 home-card">
+                    <div class="card-body p-4">
+                        <div class="small text-uppercase text-muted fw-semibold mb-2">Format</div>
+                        <h3 class="h4 card-title mb-2">Pauper Commander (PDH)</h3>
+                        <p class="card-text text-muted mb-3">
+                            Variante Commander : commander uncommon, deck en communes, identité couleur.
+                        </p>
+                        <a class="btn btn-sm btn-outline-dark" asp-page="/Formats">Voir le format PDH</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,13 +99,17 @@
 
     <!-- Comment ça marche -->
     <section class="mb-5">
-        <h2 class="h4 mb-3">Comment ça marche</h2>
+        <div class="mb-3">
+            <h2 class="h3 mb-1">Comment ça marche</h2>
+            <p class="text-muted mb-0">Trois étapes pour passer de la recherche à la decklist.</p>
+        </div>
 
         <div class="row g-3">
             <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="fw-semibold mb-2">1) Recherche une carte</div>
+                <div class="card h-100 home-card">
+                    <div class="card-body p-4">
+                        <div class="home-step-number mb-3">1</div>
+                        <h3 class="h5 mb-2">Recherche une carte</h3>
                         <p class="text-muted mb-0">
                             Trouve rapidement une carte via la recherche et les filtres.
                         </p>
@@ -73,9 +118,10 @@
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="fw-semibold mb-2">2) Ajoute-la à ton deck</div>
+                <div class="card h-100 home-card">
+                    <div class="card-body p-4">
+                        <div class="home-step-number mb-3">2</div>
+                        <h3 class="h5 mb-2">Ajoute-la à ton deck</h3>
                         <p class="text-muted mb-0">
                             Construis ta liste et garde une vue claire de la courbe et des types.
                         </p>
@@ -84,9 +130,10 @@
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="fw-semibold mb-2">3) Valide et exporte</div>
+                <div class="card h-100 home-card">
+                    <div class="card-body p-4">
+                        <div class="home-step-number mb-3">3</div>
+                        <h3 class="h5 mb-2">Valide et exporte</h3>
                         <p class="text-muted mb-0">
                             Vérifie la légalité Pauper et exporte ta liste en un clic.
                         </p>
@@ -97,13 +144,27 @@
     </section>
 
     <!-- Callout -->
-    <section class="card">
-        <div class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+    <section class="card home-callout border-0 shadow-sm">
+        <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
             <div>
-                <h2 class="h5 mb-1">Prêt à construire ton prochain deck ?</h2>
-                <p class="text-muted mb-0">Commence avec le deck builder (MVP), puis on ajoutera la validation et les stats.</p>
+                <h2 class="h4 mb-1">
+                    @(isLoggedIn ? "Prêt à construire ton prochain deck ?" : "Prêt à commencer l’aventure ?")
+                </h2>
+                <p class="text-muted mb-0">
+                    @(isLoggedIn
+                                        ? "Commence avec le deck builder, puis retrouve ensuite tes listes dans ton espace decks."
+                                        : "Crée ton compte pour sauvegarder tes decks, organiser tes listes et profiter du deck builder.")
+                </p>
             </div>
-            <a class="btn btn-dark" asp-page="/DeckBuilder">Ouvrir le deck builder</a>
+
+            @if (isLoggedIn)
+            {
+                <a class="btn btn-dark" asp-page="/Decks/Create">Ouvrir le deck builder</a>
+            }
+            else
+            {
+                <a class="btn btn-dark" asp-page="/Account/Register">Créer un compte</a>
+            }
         </div>
     </section>
 </div>
