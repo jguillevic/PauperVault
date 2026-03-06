@@ -28,13 +28,18 @@ html {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-    position: relative;
-    min-height: 100%;
+html, body {
+    height: 100%;
 }
 
 body {
-    margin-bottom: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
 }
 
 /* =========================
@@ -145,6 +150,7 @@ body {
 .pv-footer {
     background: var(--pv-footer-bg);
     color: var(--pv-footer-text);
+    margin-top: auto;
 }
 
     .pv-footer a {

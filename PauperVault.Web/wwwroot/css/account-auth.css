@@ -6,8 +6,9 @@
 
 .pv-auth-main {
     display: grid;
-    place-items: center;
-    padding: 32px 16px;
+    justify-items: center;
+    align-content: start;
+    padding: 48px 16px;
 }
 
 .pv-auth-card {
