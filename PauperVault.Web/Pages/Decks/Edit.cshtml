@@ -1,125 +1,305 @@
 ﻿@page "{id:guid}"
 @model PauperVault.Web.Pages.Decks.EditModel
+@using PauperVault.Web.Contracts.Decks
+@using PauperVault.Core.Domain.Decks;
 
-<h1>@Model.Deck.Name</h1>
+@{
+    ViewData["Title"] = Model.Deck?.Name ?? "Éditer le deck";
+}
 
-<div style="margin-top: 1rem;">
-    <label>Ajouter une carte</label><br />
-    <input id="cardSearch" type="text" autocomplete="off" style="width: 420px;" />
-    <select id="zone">
-        <option value="Main">Main</option>
-        <option value="Sideboard">Sideboard</option>
-    </select>
-    <input id="qty" type="number" value="1" min="1" style="width: 80px;" />
-    <button id="addBtn" type="button" disabled>Ajouter</button>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">@Model.Deck.Name</h1>
+            <p class="text-muted mb-0">Modifie les informations du deck et gère ses cartes.</p>
+        </div>
 
-    <div id="suggestions" style="border: 1px solid #ccc; max-width: 420px; display:none; position:absolute; background:white;"></div>
+        <a class="btn btn-outline-secondary" asp-page="/Decks/Index">Retour à mes decks</a>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- LEFT COLUMN -->
+        <div class="col-12 col-lg-4">
+
+            <!-- Deck infos -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Informations du deck</h2>
+
+                    <form method="post" asp-page-handler="SaveDeck" class="vstack gap-3">
+
+                        <div>
+                            <label asp-for="DeckForm.Name" class="form-label"></label>
+                            <input asp-for="DeckForm.Name" class="form-control" />
+                            <span asp-validation-for="DeckForm.Name" class="text-danger small"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="DeckForm.Description" class="form-label"></label>
+                            <textarea asp-for="DeckForm.Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="DeckForm.Description" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark">
+                            Enregistrer
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add card -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+
+                    <h2 class="h5 mb-3">Ajouter une carte</h2>
+
+                    <form method="post" asp-page-handler="AddCard" class="vstack gap-3">
+
+                        <div class="position-relative">
+                            <label asp-for="CardForm.CardName" class="form-label"></label>
+
+                            <input asp-for="CardForm.CardName"
+                                   class="form-control"
+                                   id="cardSearch"
+                                   autocomplete="off" />
+
+                            <span asp-validation-for="CardForm.CardName"
+                                  class="text-danger small"></span>
+
+                            <div id="suggestions"
+                                 class="list-group position-absolute w-100 shadow-sm"
+                                 style="z-index:20; display:none;">
+                            </div>
+                        </div>
+
+                        <div class="row g-2">
+
+                            <div class="col-7">
+                                <label asp-for="CardForm.Zone" class="form-label"></label>
+
+                                <select asp-for="CardForm.Zone"
+                                        class="form-select">
+
+                                    <option value="@DeckZone.Main">
+                                        Main
+                                    </option>
+
+                                    <option value="@DeckZone.Sideboard">
+                                        Sideboard
+                                    </option>
+
+                                </select>
+                            </div>
+
+                            <div class="col-5">
+                                <label asp-for="CardForm.Quantity" class="form-label"></label>
+
+                                <input asp-for="CardForm.Quantity"
+                                       class="form-control"
+                                       type="number"
+                                       min="1" />
+
+                                <span asp-validation-for="CardForm.Quantity"
+                                      class="text-danger small"></span>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-dark">
+                            Ajouter au deck
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-12 col-lg-8">
+
+            <!-- MAIN DECK -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+
+                    <h2 class="h4 mb-3">Main</h2>
+
+                    @{
+                        var mainCards = Model.Deck.Cards
+                        .Where(x => x.Zone == DeckZone.Main)
+                        .ToList();
+                    }
+
+                    @if (!mainCards.Any())
+                    {
+                        <p class="text-muted mb-0">
+                            Aucune carte dans le main deck.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+
+                            <table class="table align-middle mb-0">
+
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">Qté</th>
+                                        <th>Carte</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var c in mainCards)
+                                    {
+                                        <tr>
+                                            <td>@c.Quantity</td>
+                                            <td>@c.ScryfallId</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+            <!-- SIDEBOARD -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h2 class="h4 mb-3">Sideboard</h2>
+
+                    @{
+                        var sideCards = Model.Deck.Cards
+                        .Where(x => x.Zone == DeckZone.Sideboard)
+                        .ToList();
+                    }
+
+                    @if (!sideCards.Any())
+                    {
+                        <p class="text-muted mb-0">
+                            Aucune carte dans le sideboard.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+
+                            <table class="table align-middle mb-0">
+
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">Qté</th>
+                                        <th>Carte</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var c in sideCards)
+                                    {
+                                        <tr>
+                                            <td>@c.Quantity</td>
+                                            <td>@c.ScryfallId</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<hr />
-
-<h2>Main</h2>
-<ul>
-    @foreach (var c in Model.Deck.Cards.Where(x => x.Zone.ToString() == "Main"))
-    {
-        <li>@c.Quantity x @c.ScryfallId</li>
-    }
-</ul>
-
-<h2>Sideboard</h2>
-<ul>
-    @foreach (var c in Model.Deck.Cards.Where(x => x.Zone.ToString() == "Sideboard"))
-    {
-        <li>@c.Quantity x @c.ScryfallId</li>
-    }
-</ul>
 
 @section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
-        const deckId = "@Model.Id";
+
         const input = document.getElementById("cardSearch");
         const suggestions = document.getElementById("suggestions");
-        const addBtn = document.getElementById("addBtn");
-        const qty = document.getElementById("qty");
-        const zone = document.getElementById("zone");
-
-        let selectedName = null;
         let timer = null;
 
-        function clearSuggestions() {
-          suggestions.style.display = "none";
-          suggestions.innerHTML = "";
-          selectedName = null;
-          addBtn.disabled = true;
+        function hideSuggestions() {
+            suggestions.style.display = "none";
+            suggestions.innerHTML = "";
         }
 
         input.addEventListener("input", () => {
-          selectedName = null;
-          addBtn.disabled = true;
 
-          const q = input.value.trim();
-          if (q.length < 2) { clearSuggestions(); return; }
+            const q = input.value.trim();
 
-          clearTimeout(timer);
-          timer = setTimeout(async () => {
-            const res = await fetch(`/Decks/Api?handler=CardAutocomplete&q=${encodeURIComponent(q)}`);
-            if (!res.ok) return;
+            if (q.length < 2) {
+                hideSuggestions();
+                return;
+            }
 
-            const data = await res.json();
-            const items = data.suggestions || [];
+            clearTimeout(timer);
 
-            suggestions.innerHTML = "";
-            if (items.length === 0) { suggestions.style.display = "none"; return; }
+            timer = setTimeout(async () => {
 
-            items.slice(0, 10).forEach(name => {
-              const div = document.createElement("div");
-              div.textContent = name;
-              div.style.padding = "6px";
-              div.style.cursor = "pointer";
-              div.addEventListener("click", () => {
-                input.value = name;
-                selectedName = name;
-                addBtn.disabled = false;
-                suggestions.style.display = "none";
-              });
-              suggestions.appendChild(div);
-            });
+                const res = await fetch(`?handler=CardAutocomplete&q=${encodeURIComponent(q)}`);
 
-            suggestions.style.display = "block";
-          }, 200);
-        });
+                if (!res.ok) {
+                    hideSuggestions();
+                    return;
+                }
 
-        addBtn.addEventListener("click", async () => {
-          if (!selectedName) return;
+                const data = await res.json();
+                const items = data.suggestions || [];
 
-          addBtn.disabled = true;
+                suggestions.innerHTML = "";
 
-          // 1) resolve card via Web endpoint -> API -> Scryfall
-          const resolveRes = await fetch(`/Decks/Api?handler=CardResolve&name=${encodeURIComponent(selectedName)}`);
-          if (!resolveRes.ok) { addBtn.disabled = false; return; }
-          const card = await resolveRes.json();
+                if (!items.length) {
+                    hideSuggestions();
+                    return;
+                }
 
-          // 2) add card to deck via Web endpoint -> API
-          const addRes = await fetch(`/Decks/Api?handler=AddCard`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              deckId: deckId,
-              scryfallId: card.scryfallId,
-              zone: zone.value,
-              quantity: parseInt(qty.value || "1", 10)
-            })
-          });
+                items.slice(0, 10).forEach(name => {
 
-          if (addRes.ok) {
-            window.location.reload();
-          } else {
-            addBtn.disabled = false;
-          }
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "list-group-item list-group-item-action";
+                    btn.textContent = name;
+
+                    btn.addEventListener("click", () => {
+                        input.value = name;
+                        hideSuggestions();
+                    });
+
+                    suggestions.appendChild(btn);
+                });
+
+                suggestions.style.display = "block";
+
+            }, 200);
+
         });
 
         document.addEventListener("click", (e) => {
-          if (e.target !== input) clearSuggestions();
+            if (!suggestions.contains(e.target) && e.target !== input) {
+                hideSuggestions();
+            }
         });
+
     </script>
 }
