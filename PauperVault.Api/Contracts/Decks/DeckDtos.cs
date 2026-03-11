@@ -13,3 +13,9 @@ public record DeckDetailsDto(
 	DateTimeOffset CreatedAt,
 	DateTimeOffset UpdatedAt,
 	IReadOnlyList<DeckCardDto> Cards);
+
+public record PublicDeckListItemDto(
+	Guid Id,
+	string Name,
+	DateTimeOffset UpdatedAt,
+	string? CoverImageUrl);

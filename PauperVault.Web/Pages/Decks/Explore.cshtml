@@ -1,0 +1,64 @@
+﻿@page
+@model PauperVault.Web.Pages.Decks.ExploreModel
+
+@{
+    ViewData["Title"] = "Tous les decks";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h3 mb-1">Tous les decks</h1>
+            <p class="text-muted mb-0">Les derniers decks proposés sur PauperVault.</p>
+        </div>
+
+        <a class="btn btn-outline-dark" asp-page="/Index">Retour à l’accueil</a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    else if (Model.Decks.Count == 0)
+    {
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-0">Aucun deck à afficher pour le moment.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var deck in Model.Decks)
+            {
+                var imageUrl = string.IsNullOrWhiteSpace(deck.CoverImageUrl)
+                ? Url.Content("~/images/black-lotus-fallback.jpg")
+                : deck.CoverImageUrl;
+
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                    <a class="latest-deck-tile text-decoration-none"
+                       asp-page="/Decks/Edit"
+                       asp-route-id="@deck.Id"
+                       asp-route-tab="deck">
+
+                        <div class="latest-deck-cover-wrapper">
+                            <img src="@imageUrl"
+                                 alt="@deck.Name"
+                                 class="latest-deck-cover" />
+
+                            <div class="latest-deck-overlay"></div>
+
+                            <div class="latest-deck-title">
+                                <h3 class="h5 mb-1">@deck.Name</h3>
+                                <div class="small opacity-75">
+                                    Mis à jour le @deck.UpdatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

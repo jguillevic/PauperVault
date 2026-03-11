@@ -29,6 +29,12 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 
 		Task AddOrUpdateDeckCardAsync(Guid deckId, AddOrUpdateDeckCardRequest request, CancellationToken ct = default);
 
+		Task<IReadOnlyList<PublicDeckListItemDto>> GetPublicDecksAsync(
+			int skip = 0,
+			int take = 10,
+			CancellationToken ct = default
+		);
+
 		// Cards
 
 		Task<CardAutocompleteDto> AutocompleteCardsAsync(string q, CancellationToken ct = default);

@@ -10,6 +10,67 @@ public static class DeckEndpoints
 {
 	public static void MapDeckEndpoints(this IEndpointRouteBuilder app)
 	{
+		app.MapGet("/public/decks", async (
+		int? skip,
+		int? take,
+		DataDbContext db,
+		CancellationToken ct) =>
+		{
+			var safeSkip = Math.Max(0, skip ?? 0);
+			var safeTake = Math.Clamp(take ?? 10, 1, 100);
+
+			var decks = await db.Decks
+				.AsNoTracking()
+				.OrderByDescending(d => d.UpdatedAt)
+				.Skip(safeSkip)
+				.Take(safeTake)
+				.Select(d => new
+				{
+					d.Id,
+					d.Name,
+					d.UpdatedAt,
+					FirstCardId = d.Cards
+						.OrderBy(c => c.Zone)
+						.ThenBy(c => c.ScryfallId)
+						.Select(c => (Guid?)c.ScryfallId)
+						.FirstOrDefault()
+				})
+				.ToListAsync(ct);
+
+			var firstCardIds = decks
+				.Where(x => x.FirstCardId.HasValue)
+				.Select(x => x.FirstCardId!.Value)
+				.Distinct()
+				.ToList();
+
+			var imageByCardId = await db.Cards
+				.AsNoTracking()
+				.Where(c => firstCardIds.Contains(c.ScryfallId))
+				.ToDictionaryAsync(c => c.ScryfallId, c => c.ImageSmallUrl, ct);
+
+			var result = decks
+				.Select(d =>
+				{
+					string? coverImageUrl = null;
+
+					if (d.FirstCardId.HasValue &&
+						imageByCardId.TryGetValue(d.FirstCardId.Value, out var imageUrl) &&
+						!string.IsNullOrWhiteSpace(imageUrl))
+					{
+						coverImageUrl = imageUrl;
+					}
+
+					return new PublicDeckListItemDto(
+						d.Id,
+						d.Name,
+						d.UpdatedAt,
+						coverImageUrl);
+				})
+				.ToList();
+
+			return Results.Ok(result);
+		});
+
 		var group = app.MapGroup("/decks")
 			.RequireAuthorization();
 
