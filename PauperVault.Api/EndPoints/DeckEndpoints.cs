@@ -39,6 +39,16 @@ public static class DeckEndpoints
 
 			if (deck is null) return Results.NotFound();
 
+			var scryfallIds = deck.Cards
+				.Select(c => c.ScryfallId)
+				.Distinct()
+				.ToList();
+
+			var cardNamesById = await db.Cards
+				.AsNoTracking()
+				.Where(c => scryfallIds.Contains(c.ScryfallId))
+				.ToDictionaryAsync(c => c.ScryfallId, c => c.Name);
+
 			var dto = new DeckDetailsDto(
 				deck.Id,
 				deck.Name,
@@ -47,8 +57,12 @@ public static class DeckEndpoints
 				deck.UpdatedAt,
 				deck.Cards
 					.OrderBy(c => c.Zone)
-					.ThenBy(c => c.ScryfallId)
-					.Select(c => new DeckCardDto(c.ScryfallId, c.Zone, c.Quantity))
+					.ThenBy(c => cardNamesById.ContainsKey(c.ScryfallId) ? cardNamesById[c.ScryfallId] : c.ScryfallId.ToString())
+					.Select(c => new DeckCardDto(
+						c.ScryfallId,
+						cardNamesById.TryGetValue(c.ScryfallId, out var name) ? name : c.ScryfallId.ToString(),
+						c.Zone,
+						c.Quantity))
 					.ToList()
 			);
 

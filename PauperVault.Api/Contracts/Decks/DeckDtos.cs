@@ -4,7 +4,7 @@ namespace PauperVault.Api.Contracts.Decks;
 
 public record DeckListItemDto(Guid Id, string Name, DateTimeOffset UpdatedAt);
 
-public record DeckCardDto(Guid ScryfallId, DeckZone Zone, int Quantity);
+public record DeckCardDto(Guid ScryfallId, string Name, DeckZone Zone, int Quantity);
 
 public record DeckDetailsDto(
 	Guid Id,
