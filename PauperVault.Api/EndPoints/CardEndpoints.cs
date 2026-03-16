@@ -65,8 +65,11 @@ public static class CardEndpoints
 			existing.TypeLine = card.TypeLine;
 			existing.OracleText = card.OracleText;
 			existing.SetCode = card.SetCode;
+			existing.SetName = card.SetName;
 			existing.CollectorNumber = card.CollectorNumber;
 			existing.ImageSmallUrl = imageSmall;
+			existing.Power = card.Power;
+			existing.Toughness = card.Toughness;
 			existing.Rarity = card.Rarity;
 			existing.PauperLegality = pauperLegality;
 			existing.LastFetchedAt = DateTimeOffset.UtcNow;

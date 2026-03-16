@@ -28,8 +28,17 @@ public sealed class ScryfallCard
 	[JsonPropertyName("set")]
 	public string? SetCode { get; set; }
 
+	[JsonPropertyName("set_name")]
+	public string? SetName { get; set; }
+
 	[JsonPropertyName("collector_number")]
 	public string? CollectorNumber { get; set; }
+
+	[JsonPropertyName("power")]
+	public string? Power { get; set; }
+
+	[JsonPropertyName("toughness")]
+	public string? Toughness { get; set; }
 
 	[JsonPropertyName("rarity")]
 	public string? Rarity { get; set; }

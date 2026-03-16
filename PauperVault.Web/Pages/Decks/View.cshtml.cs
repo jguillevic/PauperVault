@@ -10,7 +10,9 @@ public class ViewModel(IPauperVaultApiClient api) : PageModel
 	[FromRoute]
 	public Guid Id { get; set; }
 
-	public PublicDeckDetailsDto Deck { get; private set; } = default!;
+	public PublicDeckDetailsDto? Deck { get; private set; }
+
+	public PublicDeckCardDto? InitialCard { get; private set; }
 
 	public string? ErrorMessage { get; private set; }
 
@@ -19,6 +21,7 @@ public class ViewModel(IPauperVaultApiClient api) : PageModel
 		try
 		{
 			Deck = await api.GetPublicDeckAsync(Id, ct);
+			InitialCard = Deck.Cards.FirstOrDefault();
 			return Page();
 		}
 		catch (HttpRequestException)

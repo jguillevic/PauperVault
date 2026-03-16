@@ -1,88 +1,198 @@
 ﻿@page "{id:guid}"
 @model PauperVault.Web.Pages.Decks.ViewModel
-@using PauperVault.Core.Domain.Decks
 
 @{
     ViewData["Title"] = Model.Deck?.Name ?? "Deck public";
 }
 
-<div class="py-4">
+<div class="deck-view-page">
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
-        <div class="alert alert-danger">@Model.ErrorMessage</div>
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
     }
-    else if (Model.Deck is not null)
+    else if (Model.Deck is null)
     {
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-            <div>
-                <h1 class="h2 mb-1">@Model.Deck.Name</h1>
-                <p class="text-muted mb-0">
-                    @Model.Deck.Description
-                </p>
-            </div>
+        <div class="alert alert-warning">
+            Deck introuvable.
+        </div>
+    }
+    else
+    {
+        <div class="deck-view-content">
+            <header class="deck-view-header">
+                <div class="deck-view-header__meta">
+                    <div class="deck-view-header__author">
+                        @Model.Deck.AuthorName
+                    </div>
 
-            <div class="d-flex gap-2">
-                <a class="btn btn-outline-secondary" asp-page="/Decks/Explore">Retour à l’exploration</a>
+                    <h1 class="deck-view-header__title">
+                        @Model.Deck.Name
+                    </h1>
+
+                    <div class="deck-view-header__updated">
+                        Dernière mise à jour :
+                        @Model.Deck.UpdatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                </div>
 
                 @if (Model.Deck.CanEdit)
                 {
-                    <a class="btn btn-dark"
-                       asp-page="/Decks/Edit"
-                       asp-route-id="@Model.Deck.Id">
-                        Modifier
-                    </a>
+                    <div class="deck-view-header__actions">
+                        <a class="btn btn-dark"
+                           asp-page="/Decks/Edit"
+                           asp-route-id="@Model.Deck.Id">
+                            Modifier
+                        </a>
+                    </div>
                 }
-            </div>
-        </div>
+            </header>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="text-muted small mb-3">
-                    Créé le @Model.Deck.CreatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
-                    · Mis à jour le @Model.Deck.UpdatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
-                </div>
+            <div class="deck-view-layout">
+                <aside class="deck-view-sidebar">
+                    @if (Model.InitialCard is not null)
+                    {
+                        <div class="card-preview-panel">
+                            <div class="card-preview-panel__image-wrapper">
+                                <img id="card-preview-image"
+                                     class="card-preview-panel__image"
+                                     src="@(Model.InitialCard.ImageUrl ?? "")"
+                                     alt="@Model.InitialCard.Name" />
+                            </div>
 
-                @{
-                    var mainDeck = Model.Deck.Cards.Where(c => c.Zone == DeckZone.Main).ToList();
-                    var sideboard = Model.Deck.Cards.Where(c => c.Zone == DeckZone.Sideboard).ToList();
-                }
+                            <div class="card-preview-panel__details">
+                                <h2 id="card-details-name" class="card-preview-panel__name">
+                                    @Model.InitialCard.Name
+                                </h2>
 
-                <h2 class="h5">Main deck</h2>
-                @if (mainDeck.Count == 0)
-                {
-                    <p class="text-muted">Aucune carte.</p>
-                }
-                else
-                {
-                    <ul class="list-group mb-4">
-                        @foreach (var card in mainDeck)
+                                <div id="card-details-type" class="card-preview-panel__type">
+                                    @Model.InitialCard.TypeLine
+                                </div>
+
+                                <div id="card-details-cost" class="card-preview-panel__cost">
+                                    @Model.InitialCard.ManaCost
+                                </div>
+
+                                <div id="card-details-text" class="card-preview-panel__text">
+                                    @Model.InitialCard.OracleText
+                                </div>
+
+                                <div id="card-details-stats" class="card-preview-panel__stats">
+                                    @if (!string.IsNullOrWhiteSpace(Model.InitialCard.Power) ||
+                                                                !string.IsNullOrWhiteSpace(Model.InitialCard.Toughness))
+                                    {
+                                        @($"{Model.InitialCard.Power} / {Model.InitialCard.Toughness}")
+                                    }
+                                </div>
+
+                                <div id="card-details-edition" class="card-preview-panel__edition">
+                                    @Model.InitialCard.SetName
+                                    @if (!string.IsNullOrWhiteSpace(Model.InitialCard.CollectorNumber))
+                                    {
+                                        <text> - #@Model.InitialCard.CollectorNumber</text>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light">
+                            Aucune carte dans ce deck.
+                        </div>
+                    }
+                </aside>
+
+                <section class="deck-view-main">
+                    <div class="deck-view-main__toolbar">
+                        <div class="deck-view-main__count">
+                            @Model.Deck.Cards.Count carte(s)
+                        </div>
+                    </div>
+
+                    <div class="deck-card-list">
+                        @foreach (var card in Model.Deck.Cards)
                         {
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>@card.Name</span>
-                                <span class="text-muted">x @card.Quantity</span>
-                            </li>
+                            <button type="button"
+                                    class="deck-card-row"
+                                    data-card-name="@card.Name"
+                                    data-card-image="@card.ImageUrl"
+                                    data-card-type="@card.TypeLine"
+                                    data-card-cost="@card.ManaCost"
+                                    data-card-text="@card.OracleText"
+                                    data-card-power="@card.Power"
+                                    data-card-toughness="@card.Toughness"
+                                    data-card-setname="@card.SetName"
+                                    data-card-collector="@card.CollectorNumber">
+                                <span class="deck-card-row__quantity">@card.Quantity</span>
+                                <span class="deck-card-row__name">@card.Name</span>
+                                <span class="deck-card-row__zone">@card.Zone</span>
+                            </button>
                         }
-                    </ul>
-                }
-
-                <h2 class="h5">Sideboard</h2>
-                @if (sideboard.Count == 0)
-                {
-                    <p class="text-muted">Aucune carte.</p>
-                }
-                else
-                {
-                    <ul class="list-group">
-                        @foreach (var card in sideboard)
-                        {
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>@card.Name</span>
-                                <span class="text-muted">x@card.Quantity</span>
-                            </li>
-                        }
-                    </ul>
-                }
+                    </div>
+                </section>
             </div>
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll(".deck-card-row");
+            const image = document.getElementById("card-preview-image");
+            const name = document.getElementById("card-details-name");
+            const type = document.getElementById("card-details-type");
+            const cost = document.getElementById("card-details-cost");
+            const text = document.getElementById("card-details-text");
+            const stats = document.getElementById("card-details-stats");
+            const edition = document.getElementById("card-details-edition");
+
+            if (!rows.length || !image || !name || !type || !cost || !text || !stats || !edition) {
+                return;
+            }
+
+            function updatePreview(row) {
+                const imageUrl = row.dataset.cardImage || "";
+                const cardName = row.dataset.cardName || "";
+                const cardType = row.dataset.cardType || "";
+                const cardCost = row.dataset.cardCost || "";
+                const cardText = row.dataset.cardText || "";
+                const cardPower = row.dataset.cardPower || "";
+                const cardToughness = row.dataset.cardToughness || "";
+                const setName = row.dataset.cardSetname || "";
+                const collector = row.dataset.cardCollector || "";
+
+                image.src = imageUrl;
+                image.alt = cardName;
+                name.textContent = cardName;
+                type.textContent = cardType;
+                cost.textContent = cardCost;
+                text.textContent = cardText;
+
+                if (cardPower || cardToughness) {
+                    stats.textContent = `${cardPower} / ${cardToughness}`;
+                } else {
+                    stats.textContent = "";
+                }
+
+                if (collector) {
+                    edition.textContent = `${setName} - #${collector}`;
+                } else {
+                    edition.textContent = setName;
+                }
+            }
+
+            rows.forEach(function (row) {
+                row.addEventListener("mouseenter", function () {
+                    updatePreview(row);
+                });
+
+                row.addEventListener("click", function () {
+                    updatePreview(row);
+                });
+            });
+        });
+    </script>
+}

@@ -154,19 +154,33 @@ public static class DeckQueries
 			.Distinct()
 			.ToList();
 
-		var cardNamesById = await db.Cards
+		var cardCacheById = await db.Cards
 			.AsNoTracking()
 			.Where(c => scryfallIds.Contains(c.ScryfallId))
-			.ToDictionaryAsync(c => c.ScryfallId, c => c.Name, ct);
+			.ToDictionaryAsync(c => c.ScryfallId, ct);
 
 		var cards = deck.Cards
 			.OrderBy(c => c.Zone)
-			.ThenBy(c => ResolveCardName(c.ScryfallId, cardNamesById))
-			.Select(c => new DeckCardDto(
-				c.ScryfallId,
-				ResolveCardName(c.ScryfallId, cardNamesById),
-				c.Zone,
-				c.Quantity))
+			.ThenBy(c => c.ScryfallId)
+			.Select(c =>
+			{
+				cardCacheById.TryGetValue(c.ScryfallId, out var cached);
+
+				return new PublicDeckCardDto(
+					c.ScryfallId,
+					cached?.Name ?? c.ScryfallId.ToString(),
+					c.Zone,
+					c.Quantity,
+					cached?.ImageSmallUrl,
+					cached?.ManaCost,
+					cached?.TypeLine,
+					cached?.OracleText,
+					cached?.Power,
+					cached?.Toughness,
+					cached?.SetCode,
+					cached?.SetName,
+					cached?.CollectorNumber);
+			})
 			.ToList();
 
 		var canEdit = !string.IsNullOrWhiteSpace(currentUserId)
@@ -176,7 +190,7 @@ public static class DeckQueries
 			deck.Id,
 			deck.Name,
 			deck.Description,
-			deck.CreatedAt,
+			deck.OwnerUserId,
 			deck.UpdatedAt,
 			cards,
 			canEdit);

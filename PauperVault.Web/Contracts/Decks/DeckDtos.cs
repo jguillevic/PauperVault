@@ -24,7 +24,22 @@ public record PublicDeckDetailsDto(
 	Guid Id,
 	string Name,
 	string? Description,
-	DateTimeOffset CreatedAt,
+	string AuthorName,
 	DateTimeOffset UpdatedAt,
-	IReadOnlyList<DeckCardDto> Cards,
+	IReadOnlyList<PublicDeckCardDto> Cards,
 	bool CanEdit);
+
+public record PublicDeckCardDto(
+	Guid ScryfallId,
+	string Name,
+	DeckZone Zone,
+	int Quantity,
+	string? ImageUrl,
+	string? ManaCost,
+	string? TypeLine,
+	string? OracleText,
+	string? Power,
+	string? Toughness,
+	string? SetCode,
+	string? SetName,
+	string? CollectorNumber);
