@@ -1,6 +1,6 @@
 ﻿@page "{id:guid}"
 @model PauperVault.Web.Pages.Decks.ViewModel
-
+@using PauperVault.Web.Infrastructure.Mana
 @{
     ViewData["Title"] = Model.Deck?.Name ?? "Deck public";
 }
@@ -70,8 +70,8 @@
                                     @Model.InitialCard.TypeLine
                                 </div>
 
-                                <div id="card-details-cost" class="card-preview-panel__cost">
-                                    @Model.InitialCard.ManaCost
+                                <div id="card-details-cost" class="card-preview-panel__cost mana-cost">
+                                    @Html.Raw(ManaCostRenderer.ToHtml(Model.InitialCard.ManaCost))
                                 </div>
 
                                 <div id="card-details-text" class="card-preview-panel__text">
@@ -168,8 +168,17 @@
                 image.alt = cardName;
                 name.textContent = cardName;
                 type.textContent = cardType;
-                cost.textContent = cardCost;
                 text.textContent = cardText;
+
+                function renderMana(costString) {
+                    if (!costString) return "";
+
+                    return costString.replace(/\{([^}]+)\}/g, function (_, symbol) {
+                        return `<i class="ms ms-${symbol.toLowerCase()}"></i>`;
+                    });
+                }
+
+                cost.innerHTML = renderMana(cardCost);
 
                 if (cardPower || cardToughness) {
                     stats.textContent = `${cardPower} / ${cardToughness}`;
