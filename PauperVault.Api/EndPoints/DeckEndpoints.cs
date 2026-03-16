@@ -7,6 +7,7 @@ public static class DeckEndpoints
 	public static void MapDeckEndpoints(this IEndpointRouteBuilder app)
 	{
 		app.MapGet("/public/decks", DeckHandlers.GetPublicDecks);
+		app.MapGet("/public/decks/{id:guid}", DeckHandlers.GetPublicDeckById);
 
 		var group = app.MapGroup("/decks")
 			.RequireAuthorization();

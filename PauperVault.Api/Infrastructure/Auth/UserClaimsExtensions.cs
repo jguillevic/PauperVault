@@ -11,4 +11,10 @@ public static class UserClaimsExtensions
 			throw new InvalidOperationException("Missing NameIdentifier claim.");
 		return userId;
 	}
+
+	public static string? GetUserIdOrNull(this ClaimsPrincipal user)
+	{
+		var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+		return string.IsNullOrWhiteSpace(userId) ? null : userId;
+	}
 }

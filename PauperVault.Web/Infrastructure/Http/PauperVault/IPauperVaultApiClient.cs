@@ -35,6 +35,8 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 			CancellationToken ct = default
 		);
 
+		Task<PublicDeckDetailsDto> GetPublicDeckAsync(Guid deckId, CancellationToken ct = default);
+
 		// Cards
 
 		Task<CardAutocompleteDto> AutocompleteCardsAsync(string q, CancellationToken ct = default);

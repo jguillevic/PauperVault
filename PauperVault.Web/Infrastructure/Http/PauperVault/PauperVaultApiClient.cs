@@ -204,6 +204,15 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 			return await ReadRequiredJsonAsync<List<PublicDeckListItemDto>>(res, "GET /public/decks", ct);
 		}
 
+		public async Task<PublicDeckDetailsDto> GetPublicDeckAsync(Guid deckId, CancellationToken ct = default)
+		{
+			var res = await http.GetAsync($"/public/decks/{deckId}", ct);
+
+			await ThrowIfErrorAsync(res, $"GET /public/decks/{deckId}", ct);
+
+			return await ReadRequiredJsonAsync<PublicDeckDetailsDto>(res, $"GET /public/decks/{deckId}", ct);
+		}
+
 		public async Task<CardAutocompleteDto> AutocompleteCardsAsync(string q, CancellationToken ct = default)
 		{
 			return await http.GetFromJsonAsync<CardAutocompleteDto>($"/cards/autocomplete?q={Uri.EscapeDataString(q)}", ct)

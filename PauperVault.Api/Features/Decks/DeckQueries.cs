@@ -134,4 +134,51 @@ public static class DeckQueries
 		string Name,
 		DateTimeOffset UpdatedAt,
 		Guid? FirstCardId);
+
+	public static async Task<PublicDeckDetailsDto?> GetPublicDeckDetailsAsync(
+		DataDbContext db,
+		Guid deckId,
+		string? currentUserId,
+		CancellationToken ct)
+	{
+		var deck = await db.Decks
+			.AsNoTracking()
+			.Include(d => d.Cards)
+			.FirstOrDefaultAsync(d => d.Id == deckId, ct);
+
+		if (deck is null)
+			return null;
+
+		var scryfallIds = deck.Cards
+			.Select(c => c.ScryfallId)
+			.Distinct()
+			.ToList();
+
+		var cardNamesById = await db.Cards
+			.AsNoTracking()
+			.Where(c => scryfallIds.Contains(c.ScryfallId))
+			.ToDictionaryAsync(c => c.ScryfallId, c => c.Name, ct);
+
+		var cards = deck.Cards
+			.OrderBy(c => c.Zone)
+			.ThenBy(c => ResolveCardName(c.ScryfallId, cardNamesById))
+			.Select(c => new DeckCardDto(
+				c.ScryfallId,
+				ResolveCardName(c.ScryfallId, cardNamesById),
+				c.Zone,
+				c.Quantity))
+			.ToList();
+
+		var canEdit = !string.IsNullOrWhiteSpace(currentUserId)
+			&& deck.OwnerUserId == currentUserId;
+
+		return new PublicDeckDetailsDto(
+			deck.Id,
+			deck.Name,
+			deck.Description,
+			deck.CreatedAt,
+			deck.UpdatedAt,
+			cards,
+			canEdit);
+	}
 }

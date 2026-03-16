@@ -1,0 +1,88 @@
+﻿@page "{id:guid}"
+@model PauperVault.Web.Pages.Decks.ViewModel
+@using PauperVault.Core.Domain.Decks
+
+@{
+    ViewData["Title"] = Model.Deck?.Name ?? "Deck public";
+}
+
+<div class="py-4">
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    else if (Model.Deck is not null)
+    {
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div>
+                <h1 class="h2 mb-1">@Model.Deck.Name</h1>
+                <p class="text-muted mb-0">
+                    @Model.Deck.Description
+                </p>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" asp-page="/Decks/Explore">Retour à l’exploration</a>
+
+                @if (Model.Deck.CanEdit)
+                {
+                    <a class="btn btn-dark"
+                       asp-page="/Decks/Edit"
+                       asp-route-id="@Model.Deck.Id">
+                        Modifier
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small mb-3">
+                    Créé le @Model.Deck.CreatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
+                    · Mis à jour le @Model.Deck.UpdatedAt.LocalDateTime.ToString("dd/MM/yyyy HH:mm")
+                </div>
+
+                @{
+                    var mainDeck = Model.Deck.Cards.Where(c => c.Zone == DeckZone.Main).ToList();
+                    var sideboard = Model.Deck.Cards.Where(c => c.Zone == DeckZone.Sideboard).ToList();
+                }
+
+                <h2 class="h5">Main deck</h2>
+                @if (mainDeck.Count == 0)
+                {
+                    <p class="text-muted">Aucune carte.</p>
+                }
+                else
+                {
+                    <ul class="list-group mb-4">
+                        @foreach (var card in mainDeck)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@card.Name</span>
+                                <span class="text-muted">x @card.Quantity</span>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <h2 class="h5">Sideboard</h2>
+                @if (sideboard.Count == 0)
+                {
+                    <p class="text-muted">Aucune carte.</p>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var card in sideboard)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@card.Name</span>
+                                <span class="text-muted">x@card.Quantity</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+</div>

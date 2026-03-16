@@ -139,4 +139,21 @@ public static class DeckHandlers
 
 		return deleted ? Results.NoContent() : Results.NotFound();
 	}
+
+	public static async Task<IResult> GetPublicDeckById(
+		Guid id,
+		DataDbContext db,
+		HttpContext ctx,
+		CancellationToken ct)
+	{
+		var currentUserId = ctx.User.GetUserIdOrNull();
+
+		var deck = await DeckQueries.GetPublicDeckDetailsAsync(
+			db,
+			id,
+			currentUserId,
+			ct);
+
+		return deck is null ? Results.NotFound() : Results.Ok(deck);
+	}
 }
