@@ -48,7 +48,7 @@ public static class DeckHandlers
 		var userId = ctx.User.GetUserIdOrThrow();
 
 		if (!DeckRules.IsValidName(req.Name))
-			return Results.BadRequest("Deck name is required.");
+			return Results.BadRequest(DeckErrors.NameRequired);
 
 		var deckId = await DeckCommands.CreateDeckAsync(
 			db,
@@ -70,7 +70,7 @@ public static class DeckHandlers
 		var userId = ctx.User.GetUserIdOrThrow();
 
 		if (!DeckRules.IsValidName(req.Name))
-			return Results.BadRequest("Deck name is required.");
+			return Results.BadRequest(DeckErrors.NameRequired);
 
 		var updated = await DeckCommands.UpdateDeckAsync(
 			db,
@@ -105,7 +105,7 @@ public static class DeckHandlers
 		var userId = ctx.User.GetUserIdOrThrow();
 
 		if (!DeckRules.IsValidQuantity(req.Quantity))
-			return Results.BadRequest("Quantity is required");
+			return Results.BadRequest(DeckErrors.QuantityRequired);
 
 		var updated = await DeckCommands.UpsertDeckCardAsync(
 			db,

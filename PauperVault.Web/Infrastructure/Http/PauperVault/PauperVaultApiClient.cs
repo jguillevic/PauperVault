@@ -1,4 +1,5 @@
-﻿using PauperVault.Contracts.Cards.Dto;
+﻿using PauperVault.Contracts.Auth.Dtos;
+using PauperVault.Contracts.Cards.Dto;
 using PauperVault.Contracts.Decks.Dtos;
 using PauperVault.Contracts.Decks.Requests;
 using PauperVault.Contracts.Decks.Responses;
@@ -84,7 +85,7 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 			await ThrowIfErrorAsync(resp, "auth/register", ct);
 		}
 
-		public async Task<MeResponse> MeAsync(CancellationToken ct = default)
+		public async Task<MeDto> MeAsync(CancellationToken ct = default)
 		{
 			var resp = await http.GetAsync("auth/me", ct);
 
@@ -95,7 +96,7 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 
 			var data = await ReadRequiredJsonAsync<MeApiResponse>(resp, "auth/me", ct);
 
-			return new MeResponse(data.UserId, data.Email);
+			return new MeDto(data.UserId, data.Email);
 		}
 
 		public async Task<string> GoogleLoginAsync(string idToken, CancellationToken ct = default)

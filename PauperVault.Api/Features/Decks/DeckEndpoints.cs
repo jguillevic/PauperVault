@@ -1,6 +1,4 @@
-﻿using PauperVault.Api.Features.Decks;
-
-namespace PauperVault.Api.Endpoints;
+﻿namespace PauperVault.Api.Features.Decks;
 
 public static class DeckEndpoints
 {

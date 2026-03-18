@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.IdentityModel.JsonWebTokens;
+using System.Security.Claims;
 
 namespace PauperVault.Api.Infrastructure.Auth;
 
@@ -17,4 +18,9 @@ public static class UserClaimsExtensions
 		var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 		return string.IsNullOrWhiteSpace(userId) ? null : userId;
 	}
+
+	public static string? GetEmailOrNull(this ClaimsPrincipal user)
+		=> user.FindFirstValue(ClaimTypes.Email)
+		?? user.FindFirstValue(JwtRegisteredClaimNames.Email)
+		?? user.FindFirstValue("email");
 }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PauperVault.Api.Endpoints;
+using PauperVault.Api.Features.Auth;
+using PauperVault.Api.Features.Cards;
+using PauperVault.Api.Features.Decks;
 using PauperVault.Api.Infrastructure.Auth;
 using PauperVault.Api.Infrastructure.Data;
 using PauperVault.Api.Infrastructure.Scryfall;
@@ -103,7 +105,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
-app.MapUserEndpoints();
 app.MapDeckEndpoints();
 app.MapCardEndpoints();
 

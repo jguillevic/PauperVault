@@ -1,4 +1,5 @@
-﻿using PauperVault.Contracts.Cards.Dto;
+﻿using PauperVault.Contracts.Auth.Dtos;
+using PauperVault.Contracts.Cards.Dto;
 using PauperVault.Contracts.Decks.Dtos;
 using PauperVault.Contracts.Decks.Requests;
 
@@ -12,7 +13,7 @@ namespace PauperVault.Web.Infrastructure.Http.PauperVault
 
 		Task RegisterAsync(string email, string password, CancellationToken ct = default);
 
-		Task<MeResponse> MeAsync(CancellationToken ct = default);
+		Task<MeDto> MeAsync(CancellationToken ct = default);
 
 		Task<string> GoogleLoginAsync(string idToken, CancellationToken ct = default);
 

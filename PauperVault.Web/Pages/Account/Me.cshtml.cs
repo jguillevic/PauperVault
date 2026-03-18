@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PauperVault.Contracts.Auth.Dtos;
 using PauperVault.Web.Infrastructure.Http.PauperVault;
 using PauperVault.Web.Services.Account;
 
@@ -7,7 +8,7 @@ namespace PauperVault.Web.Pages.Account;
 
 public class MeModel(IPauperVaultApiClient api, ITokenStore tokenStore) : PageModel
 {
-	public MeResponse? Me { get; private set; }
+	public MeDto? Me { get; private set; }
 	public string? ErrorMessage { get; private set; }
 
 	public async Task<IActionResult> OnGetAsync(CancellationToken ct)
