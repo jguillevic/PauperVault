@@ -9,6 +9,8 @@ on:
       - main
     paths:
       - "PauperVault.Web/**"
+      - "PauperVault.Core/**"
+      - "PauperVault.Contracts/**"
   workflow_dispatch:
 
 jobs:
