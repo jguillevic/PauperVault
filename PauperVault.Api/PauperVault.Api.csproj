@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PauperVault.Contracts\PauperVault.Contracts.csproj" />
     <ProjectReference Include="..\PauperVault.Core\PauperVault.Core.csproj" />
   </ItemGroup>
 

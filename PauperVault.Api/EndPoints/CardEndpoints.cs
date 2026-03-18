@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PauperVault.Api.Contracts.Cards;
 using PauperVault.Api.Infrastructure.Data;
 using PauperVault.Api.Infrastructure.Scryfall;
+using PauperVault.Contracts.Cards.Dto;
 using PauperVault.Core.Domain.Cards;
 
 namespace PauperVault.Api.Endpoints;

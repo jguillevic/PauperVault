@@ -1,5 +1,7 @@
-﻿using PauperVault.Web.Contracts.Cards;
-using PauperVault.Web.Contracts.Decks;
+﻿using PauperVault.Contracts.Cards.Dto;
+using PauperVault.Contracts.Decks.Dtos;
+using PauperVault.Contracts.Decks.Requests;
+using PauperVault.Contracts.Decks.Responses;
 using System.Net;
 using System.Text.Json.Serialization;
 

@@ -1,6 +1,4 @@
-﻿namespace PauperVault.Api.Contracts.Cards;
-
-public record CardAutocompleteDto(IReadOnlyList<string> Suggestions);
+﻿namespace PauperVault.Contracts.Cards.Dto;
 
 public record CardDto(
 	Guid ScryfallId,
@@ -12,4 +10,5 @@ public record CardDto(
 	string? CollectorNumber,
 	string? Rarity,
 	string? PauperLegality,
-	string? ImageSmallUrl);
+	string? ImageSmallUrl
+);

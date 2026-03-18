@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PauperVault.Api.Contracts.Decks;
 using PauperVault.Api.Infrastructure.Data;
+using PauperVault.Contracts.Decks.Dtos;
 
 namespace PauperVault.Api.Features.Decks;
 

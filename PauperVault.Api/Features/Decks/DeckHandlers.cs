@@ -1,6 +1,6 @@
-﻿using PauperVault.Api.Contracts.Decks;
-using PauperVault.Api.Infrastructure.Auth;
+﻿using PauperVault.Api.Infrastructure.Auth;
 using PauperVault.Api.Infrastructure.Data;
+using PauperVault.Contracts.Decks.Requests;
 using PauperVault.Core.Domain.Decks;
 
 namespace PauperVault.Api.Features.Decks;

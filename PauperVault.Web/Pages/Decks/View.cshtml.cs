@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using PauperVault.Web.Contracts.Decks;
+using PauperVault.Contracts.Decks.Dtos;
 using PauperVault.Web.Infrastructure.Http.PauperVault;
 
 namespace PauperVault.Web.Pages.Decks;

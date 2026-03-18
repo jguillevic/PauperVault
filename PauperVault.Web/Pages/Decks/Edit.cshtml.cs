@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PauperVault.Contracts.Decks.Dtos;
+using PauperVault.Contracts.Decks.Requests;
 using PauperVault.Core.Domain.Decks;
-using PauperVault.Web.Contracts.Decks;
 using PauperVault.Web.Infrastructure.Http.PauperVault;
 using System.ComponentModel.DataAnnotations;
 
