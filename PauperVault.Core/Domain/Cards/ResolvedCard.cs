@@ -10,6 +10,8 @@ public sealed record ResolvedCard(
 	string? SetName,
 	string? CollectorNumber,
 	string? ImageSmallUrl,
+	string? ImageNormalUrl,
+	string? ImageLargeUrl,
 	string? Power,
 	string? Toughness,
 	string? Rarity,

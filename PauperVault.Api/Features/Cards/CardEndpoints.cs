@@ -10,5 +10,8 @@ public static class CardEndpoints
 		group.MapGet("/autocomplete", CardHandlers.AutocompleteAsync);
 		group.MapGet("/resolve", CardHandlers.ResolveAsync);
 		group.MapGet("/{scryfallId:guid}", CardHandlers.GetByIdAsync);
+
+		group.MapPost("/{scryfallId:guid}/invalidate", CardHandlers.InvalidateAsync);
+		group.MapPost("/invalidate-all", CardHandlers.InvalidateAllAsync);
 	}
 }

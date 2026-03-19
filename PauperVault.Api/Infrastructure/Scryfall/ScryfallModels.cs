@@ -8,6 +8,12 @@ public sealed class ScryfallAutocompleteResponse
 	public List<string> Data { get; set; } = new();
 }
 
+public sealed class ScryfallCardFace
+{
+	[JsonPropertyName("image_uris")]
+	public Dictionary<string, string>? ImageUris { get; set; }
+}
+
 public sealed class ScryfallCard
 {
 	[JsonPropertyName("id")]
@@ -48,4 +54,7 @@ public sealed class ScryfallCard
 
 	[JsonPropertyName("image_uris")]
 	public Dictionary<string, string>? ImageUris { get; set; }
+
+	[JsonPropertyName("card_faces")]
+	public List<ScryfallCardFace>? CardFaces { get; set; }
 }

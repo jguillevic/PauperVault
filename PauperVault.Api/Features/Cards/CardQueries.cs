@@ -8,6 +8,8 @@ namespace PauperVault.Api.Features.Cards;
 
 public static class CardQueries
 {
+	private static readonly TimeSpan CacheTtl = TimeSpan.FromHours(24);
+
 	public static CardAutocompleteDto EmptyAutocomplete()
 		=> new(Array.Empty<string>());
 
@@ -29,6 +31,9 @@ public static class CardQueries
 		if (card is null)
 			return null;
 
+		var imageUris = card.ImageUris
+			?? card.CardFaces?.FirstOrDefault(f => f.ImageUris is not null)?.ImageUris;
+
 		return new ResolvedCard(
 			card.Id,
 			card.Name,
@@ -38,7 +43,9 @@ public static class CardQueries
 			card.SetCode,
 			card.SetName,
 			card.CollectorNumber,
-			CardRules.GetSmallImageUrl(card.ImageUris),
+			CardRules.GetImageUrl(imageUris, "small"),
+			CardRules.GetImageUrl(imageUris, "normal"),
+			CardRules.GetImageUrl(imageUris, "large"),
 			card.Power,
 			card.Toughness,
 			card.Rarity,
@@ -55,6 +62,21 @@ public static class CardQueries
 			.FirstOrDefaultAsync(x => x.ScryfallId == scryfallId, ct);
 	}
 
+	public static async Task<CardCache?> GetValidCachedByNameAsync(
+		DataDbContext db,
+		string normalizedName,
+		CancellationToken ct)
+	{
+		var cutoff = DateTimeOffset.UtcNow.Subtract(CacheTtl);
+
+		return await db.Cards
+			.FirstOrDefaultAsync(c =>
+				c.Name == normalizedName &&
+				c.InvalidatedAt == null &&
+				c.LastFetchedAt >= cutoff,
+				ct);
+	}
+
 	public static CardDto ToDto(CardCache card)
 		=> new(
 			card.ScryfallId,
@@ -66,5 +88,8 @@ public static class CardQueries
 			card.CollectorNumber,
 			card.Rarity,
 			card.PauperLegality,
-			card.ImageSmallUrl);
+			card.ImageSmallUrl,
+			card.ImageNormalUrl,
+			card.ImageLargeUrl,
+			card.InvalidatedAt);
 }

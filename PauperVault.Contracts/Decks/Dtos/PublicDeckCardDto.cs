@@ -7,7 +7,9 @@ public record PublicDeckCardDto(
 	string Name,
 	DeckZone Zone,
 	int Quantity,
-	string? ImageUrl,
+	string? ImageSmallUrl,
+	string? ImageNormalUrl,
+	string? ImageLargeUrl,
 	string? ManaCost,
 	string? TypeLine,
 	string? OracleText,
@@ -16,4 +18,7 @@ public record PublicDeckCardDto(
 	string? SetCode,
 	string? SetName,
 	string? CollectorNumber
-);
+)
+{
+	public string? ImageUrl => ImageNormalUrl ?? ImageSmallUrl ?? ImageLargeUrl;
+}

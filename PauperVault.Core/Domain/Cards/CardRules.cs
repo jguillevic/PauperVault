@@ -20,12 +20,12 @@ public static class CardRules
 			: null;
 	}
 
-	public static string? GetSmallImageUrl(IDictionary<string, string>? imageUris)
+	public static string? GetImageUrl(IDictionary<string, string>? imageUris, string version)
 	{
 		if (imageUris is null)
 			return null;
 
-		return imageUris.TryGetValue("small", out var value)
+		return imageUris.TryGetValue(version, out var value)
 			? value
 			: null;
 	}

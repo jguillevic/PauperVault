@@ -16,6 +16,8 @@ public class CardCache
 	public string? CollectorNumber { get; set; }
 
 	public string? ImageSmallUrl { get; set; }
+	public string? ImageNormalUrl { get; set; }
+	public string? ImageLargeUrl { get; set; }
 
 	public string? Power { get; set; }
 	public string? Toughness { get; set; }
@@ -24,4 +26,14 @@ public class CardCache
 	public string? PauperLegality { get; set; }
 
 	public DateTimeOffset LastFetchedAt { get; set; } = DateTimeOffset.UtcNow;
+
+	public DateTimeOffset? InvalidatedAt { get; set; }
+
+	public bool IsValid(TimeSpan ttl)
+	{
+		if (InvalidatedAt is not null)
+			return false;
+
+		return LastFetchedAt >= DateTimeOffset.UtcNow.Subtract(ttl);
+	}
 }

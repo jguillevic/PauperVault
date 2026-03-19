@@ -15,40 +15,25 @@ public static class DeckQueries
 		var safeSkip = Math.Max(0, skip ?? 0);
 		var safeTake = Math.Clamp(take ?? 10, 1, 100);
 
-		var decks = await db.Decks
+		return await db.Decks
 			.AsNoTracking()
 			.OrderByDescending(d => d.UpdatedAt)
 			.Skip(safeSkip)
 			.Take(safeTake)
-			.Select(d => new PublicDeckProjection(
+			.Select(d => new PublicDeckListItemDto(
 				d.Id,
 				d.Name,
 				d.UpdatedAt,
 				d.Cards
 					.OrderBy(c => c.Zone)
 					.ThenBy(c => c.ScryfallId)
-					.Select(c => (Guid?)c.ScryfallId)
-					.FirstOrDefault()))
+					.Join(
+						db.Cards,
+						dc => dc.ScryfallId,
+						cc => cc.ScryfallId,
+						(dc, cc) => cc.ImageNormalUrl ?? cc.ImageSmallUrl ?? cc.ImageLargeUrl)
+					.FirstOrDefault(url => !string.IsNullOrWhiteSpace(url))))
 			.ToListAsync(ct);
-
-		var firstCardIds = decks
-			.Where(x => x.FirstCardId.HasValue)
-			.Select(x => x.FirstCardId!.Value)
-			.Distinct()
-			.ToList();
-
-		var imageByCardId = await db.Cards
-			.AsNoTracking()
-			.Where(c => firstCardIds.Contains(c.ScryfallId))
-			.ToDictionaryAsync(c => c.ScryfallId, c => c.ImageSmallUrl, ct);
-
-		return decks
-			.Select(d => new PublicDeckListItemDto(
-				d.Id,
-				d.Name,
-				d.UpdatedAt,
-				ResolveCoverImageUrl(d.FirstCardId, imageByCardId)))
-			.ToList();
 	}
 
 	public static async Task<IReadOnlyList<DeckListItemDto>> GetDeckListForUserAsync(
@@ -172,6 +157,8 @@ public static class DeckQueries
 					c.Zone,
 					c.Quantity,
 					cached?.ImageSmallUrl,
+					cached?.ImageNormalUrl,
+					cached?.ImageLargeUrl,
 					cached?.ManaCost,
 					cached?.TypeLine,
 					cached?.OracleText,

@@ -10,5 +10,8 @@ public record CardDto(
 	string? CollectorNumber,
 	string? Rarity,
 	string? PauperLegality,
-	string? ImageSmallUrl
+	string? ImageSmallUrl,
+	string? ImageNormalUrl,
+	string? ImageLargeUrl,
+	DateTimeOffset? InvalidatedAt
 );
