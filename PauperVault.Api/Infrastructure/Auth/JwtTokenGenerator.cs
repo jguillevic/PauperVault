@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using PauperVault.Api.Infrastructure.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,10 +10,10 @@ public static class JwtTokenGenerator
 {
 	public static string GenerateToken(ApplicationUser user, IConfiguration config)
 	{
-		var key = config["Jwt:Key"]!;
-		var issuer = config["Jwt:Issuer"]!;
-		var audience = config["Jwt:Audience"]!;
-		var expiresMinutes = int.Parse(config["Jwt:ExpiresMinutes"]!);
+		var key = config[ConfigurationKeys.JwtKey]!;
+		var issuer = config[ConfigurationKeys.JwtIssuer]!;
+		var audience = config[ConfigurationKeys.JwtAudience]!;
+		var expiresMinutes = int.Parse(config[ConfigurationKeys.JwtExpiresMinutes]!);
 
 		var claims = new List<Claim>
 		{

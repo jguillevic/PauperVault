@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PauperVault.Api.Infrastructure.Configuration;
 using PauperVault.Api.Infrastructure.Data;
 using PauperVault.Api.Infrastructure.Scryfall;
 using PauperVault.Contracts.Cards.Dto;
@@ -43,9 +44,9 @@ public static class CardQueries
 			card.SetCode,
 			card.SetName,
 			card.CollectorNumber,
-			CardRules.GetImageUrl(imageUris, "small"),
-			CardRules.GetImageUrl(imageUris, "normal"),
-			CardRules.GetImageUrl(imageUris, "large"),
+			CardRules.GetImageUrl(imageUris, ConfigurationKeys.SmallVersion),
+			CardRules.GetImageUrl(imageUris, ConfigurationKeys.NormalVersion),
+			CardRules.GetImageUrl(imageUris, ConfigurationKeys.LargeVersion),
 			card.Power,
 			card.Toughness,
 			card.Rarity,
