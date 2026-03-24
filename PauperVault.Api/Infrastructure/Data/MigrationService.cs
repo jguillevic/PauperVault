@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using PauperVault.Api.Infrastructure.Configuration;
-using PauperVault.Api.Infrastructure.Data;
 
 namespace PauperVault.Api.Infrastructure.Data;
 
